@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Husky Heist</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--red:#c41230;--reddark:#a00e28;--gold:#d4a843;--bg:#0f0f0f;--card:#1a1a1a;--border:#2a2a2a;--text:#e8e8e8;--dim:#888;--ok:#22c55e;--okbg:#0a2a14}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+.wrap{max-width:600px;margin:0 auto;padding:16px}
+.hdr{text-align:center;padding:40px 20px 30px}
+.hdr h1{font-size:32px;font-weight:900;color:var(--red);letter-spacing:-0.5px}
+.hdr .sub{font-size:14px;color:var(--dim);margin-top:4px}
+.badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.badge{font-size:12px;background:var(--card);border:1px solid var(--border);padding:5px 12px;border-radius:20px;color:var(--dim)}
+.dots{display:flex;gap:6px;justify-content:center;margin:20px 0}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--border);transition:all .3s}
+.dot.on{background:var(--red);transform:scale(1.2)}
+.dot.ok{background:var(--ok)}
+.tbar{display:flex;align-items:center;justify-content:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:24px;text-align:center}
+.tbar .tm{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--gold)}
+.tbar .lb{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.tbtn{background:var(--border);border:none;color:var(--text);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600}
+.tbtn:hover{background:#333}
+.tbtn.ps{background:var(--red);color:#fff}
+.mc{margin-bottom:12px}
+.m{padding:14px 16px;border-radius:16px;font-size:14px;line-height:1.7;max-width:92%;white-space:pre-line;animation:fi .3s ease}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.m.nr{background:var(--card);border:1px solid var(--border);margin-right:auto;border-bottom-left-radius:4px}
+.m.cl{background:#1a1520;border:1px solid #2a2030;margin-right:auto;border-bottom-left-radius:4px;font-family:'Courier New',monospace;color:#c8a0e8}
+.m.pl{background:var(--red);color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+.m.sy{background:var(--okbg);border:1px solid #1a4a2a;text-align:center;max-width:100%;font-weight:600;color:var(--ok)}
+.m.lu{background:#1a1a0a;border:1px solid #3a3a1a;text-align:center;max-width:100%}
+.sn{font-size:11px;font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
+.ia{display:flex;gap:8px;margin:16px 0;position:sticky;bottom:16px;background:var(--bg);padding:8px 0}
+.ia input{flex:1;padding:12px 16px;border-radius:24px;background:var(--card);border:1px solid var(--border);color:var(--text);font-size:14px;font-family:inherit;outline:none}
+.ia input:focus{border-color:var(--red)}
+.ia input::placeholder{color:#555}
+.sbtn{width:44px;height:44px;border-radius:50%;border:none;background:var(--red);color:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sbtn:hover{background:var(--reddark)}
+.hr{display:flex;gap:8px;margin:8px 0 16px;flex-wrap:wrap}
+.hb{padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--dim);cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;transition:all .2s}
+.hb:hover{border-color:var(--gold);color:var(--gold)}
+.hb:disabled{opacity:.3;cursor:not-allowed}
+.stitle{text-align:center;margin-bottom:16px}
+.stitle div:first-child{font-size:13px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1px}
+.stitle div:last-child{font-size:12px;color:var(--dim);margin-top:2px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+var S=[
+{id:0,type:"intro",messages:[
+{from:"nr",text:"\ud83d\udc3e Hey there, Husky! It\u2019s Coach. I need your help \u2014 this is urgent.\n\nPaws has gone missing. Our beloved mascot was last seen near Cabot Center before yesterday\u2019s pep rally, and now there\u2019s no sign of him anywhere. Campus police found a torn note near his kennel that said:\n\n\"Want him back? Prove you\u2019re a real Northeastern Husky. Follow my trail.\"\n\nSomeone\u2019s playing games with us. I need you to follow the clues this creep left behind, figure out where they\u2019re hiding Paws, and bring him home before Saturday\u2019s game.\n\nI\u2019ll be your guide over text. Head to the Cy Young Statue outside Cabot Center to start \u2014 you know, the bronze pitcher on the old World Series grounds. When you\u2019re there, type START."}
+],accept:["start"],pr:"I\u2019m at the statue. Let\u2019s find Paws."},
+
+{id:1,title:"Stop 1 \u2014 The Pitcher\u2019s Mound",loc:"Cy Young Statue, outside Cabot Center",messages:[
+{from:"nr",text:"Good, you\u2019re here. The Cy Young statue \u2014 standing on the exact spot where the first-ever World Series was played. Pretty legendary ground.\n\nLook around the statue and its plaque. There should be something taped to the back of the base. See it? It\u2019s the first clue from our mystery kidnapper."},
+{from:"cl",text:"\ud83d\udcdc CLUE FOUND:\n\nYou\u2019re standing where history hit a home run. The year it all started is etched in stone right in front of you.\n\nTake that year. Add up all four of its digits. That number is your first key.\n\nNow look: what sport made this ground famous?\n\nYour answer: the digit sum, followed by the sport.\nExample format: 15HOCKEY"}
+],hints:["Coach: The first World Series happened in the early 1900s. The year starts with \"19...\" Look closely at the plaque!","Coach: The year is 1903. Add those digits: 1+9+0+3. And the sport? Think about what a pitcher does..."],
+ans:["13baseball","13 baseball"],pr:"13BASEBALL",
+ok:"That\u2019s it! 1903, digits add to 13, and the sport is baseball. The first World Series, right under our feet.\n\nThere\u2019s something else written on the back of that note. It says:\n\n\"Head to where the bricks hold memories and one holds a question that changed someone\u2019s life forever. Walk toward the big open green space with the brick pathways \u2014 Centennial Common.\"\n\nThat\u2019s about a 3-minute walk toward Ryder Hall. Let me know when you arrive \u2014 type READY."},
+
+{id:2,title:"Stop 2 \u2014 Written in Brick",loc:"Centennial Common, near Ryder Hall",messages:[
+{from:"nr",text:"Centennial Common \u2014 the heart of campus. See all those bricks lining the pathways? Most of them are engraved with donor names. But one of them is different. Very different.\n\nSomewhere near Ryder Hall, there\u2019s a brick that doesn\u2019t have a name on it. Instead, it has a question. A romantic one. Find it."},
+{from:"cl",text:"\ud83d\udcdc CLUE FOUND (on a card tucked between the bricks):\n\nYou found the love brick! Someone literally carved their heart into this campus.\n\nNow here\u2019s your task. The kidnapper left a coded message. Each letter has been shifted forward by 3 positions in the alphabet (A becomes D, B becomes E, etc). Shift each letter BACKWARD by 3 to decode it:\n\nKHDG WR WKH WXQQHOV\n\nWhat does the decoded message say? Type it in exactly."}
+],hints:["Coach: It\u2019s called a Caesar cipher. Go letter by letter and shift each one back by 3. So K becomes H, H becomes E, D becomes A, G becomes D...","Coach: The first word decodes to HEAD. Keep going \u2014 W becomes T, R becomes O... You\u2019ve got this!"],
+ans:["head to the tunnels"],pr:"HEAD TO THE TUNNELS",
+ok:"\"HEAD TO THE TUNNELS\" \u2014 nice work cracking that cipher!\n\nThe tunnels... Northeastern has an underground tunnel system that connects 11 buildings across campus. The main entrance is near the Bookstore by Snell Library.\n\nBut wait \u2014 there\u2019s more writing on that card. The kidnapper added:\n\n\"Before you go underground, stop by the strange bronze figure lounging near Curry Student Center. She\u2019s got something for you.\"\n\nThat\u2019s just a 2-minute walk from here. Head toward Curry and look for the Reclining Figure sculpture. Type READY when you\u2019re there."},
+
+{id:3,title:"Stop 3 \u2014 The Director\u2019s Chair",loc:"Reclining Figure Sculpture, Curry Student Center",messages:[
+{from:"nr",text:"There she is \u2014 the bronze Reclining Figure. Most people walk right past her, but she\u2019s got a great origin story.\n\nThis sculpture was created by someone who was WAY more famous for making movies than making art. Specifically, a comedy franchise about a very clumsy French detective.\n\nThere\u2019s a sealed envelope tucked at the base of the sculpture."},
+{from:"cl",text:"\ud83d\udcdc CLUE FOUND:\n\nThe detective from those movies has a name you definitely know \u2014 even if you can\u2019t spell it.\n\nWho am I? \"I am the bumbling French detective from Blake Edwards\u2019 most famous film franchise. I chase jewel thieves and destroy everything in my path.\"\n\nWhat is my LAST NAME?\n\n(Just the last name, one word)"}
+],hints:["Coach: Blake Edwards directed The Pink Panther movies. The main character is Inspector _______.","Coach: It\u2019s Inspector CLOUSEAU \u2014 played by Peter Sellers. Tricky to spell! C-L-O-U-S-E-A-U."],
+ans:["clouseau"],pr:"CLOUSEAU",
+ok:"Inspector Clouseau! Blake Edwards \u2014 the guy who directed The Pink Panther \u2014 made this sculpture. Who knew Hollywood directors moonlighted as bronze artists?\n\nInside the envelope there\u2019s another note from our kidnapper:\n\n\"Impressive. But can you find your way in the dark? Go underground. The primary tunnel entrance is near the Bookstore, next to Snell Library.\"\n\nHead to Snell Library \u2014 about 3 minutes from here. Type READY when you arrive."},
+
+{id:4,title:"\ud83c\udf55 HALFTIME \u2014 Lunch Break + Sit-Down Puzzle",loc:"Snell Library area / grab food nearby",messages:[
+{from:"lu",text:"\u23f8\ufe0f HALFTIME BREAK\n\nNice work \u2014 you\u2019re halfway through! The timer is paused. Grab lunch, take a breather, catch up with your team.\n\nNearby food spots:\n\u2022 Curry Student Center food court (2 min walk)\n\u2022 Wollaston\u2019s Market in International Village\n\u2022 Tatte Bakery on Huntington Ave\n\u2022 Rebecca\u2019s Cafe in Ell Hall\n\nWhile you eat, work on the sit-down puzzle below. It\u2019s from the kidnapper \u2014 apparently they like logic games.\n\nType DONE when you\u2019ve finished eating and solved the puzzle to restart the timer."},
+{from:"cl",text:"\ud83d\udcdc SIT-DOWN PUZZLE \u2014 The Tunnel Map\n\nNortheastern\u2019s tunnel system connects 11 buildings. The kidnapper left this logic puzzle:\n\nFive students \u2014 Ayla, Ben, Carmen, Dev, and Elena \u2014 each entered the tunnels from a different building. Figure out who entered from SNELL LIBRARY:\n\n1. Ayla entered from a building whose name starts with a vowel.\n2. Ben did NOT enter from Dodge Hall or Ell Hall.\n3. Carmen entered from the building that comes alphabetically just before Dev\u2019s building.\n4. Elena entered from Richards Hall.\n5. The five buildings are: Cabot Gym, Dodge Hall, Ell Hall, Richards Hall, Snell Library.\n\nWho entered from Snell Library? Type their name."}
+],hints:["Coach: Start with the sure things. Elena = Richards Hall (given). Ayla needs a vowel-starting building \u2014 that\u2019s Ell Hall.","Coach: Carmen\u2019s building is alphabetically just before Dev\u2019s. That leaves Cabot Gym, Dodge Hall, and Snell Library for Ben/Carmen/Dev. Cabot comes before Dodge... so Carmen = Cabot, Dev = Dodge. Who\u2019s left?"],
+ans:["ben"],pr:"BEN",
+ok:"Ben! Nice one. Elena = Richards, Ayla = Ell Hall, Carmen = Cabot, Dev = Dodge, and Ben = Snell Library.\n\nOkay, break\u2019s over. The kidnapper\u2019s message continues:\n\n\"You figured out my tunnel puzzle, but you still don\u2019t know WHO I am. Head to ISEC \u2014 that big glass building \u2014 and look for the next clue near the main entrance.\"\n\nISEC is about a 4-minute walk. Type READY when you\u2019re there."},
+
+{id:5,title:"Stop 5 \u2014 The Glass Giant",loc:"ISEC (Interdisciplinary Science and Engineering Complex)",messages:[
+{from:"nr",text:"ISEC \u2014 220,000 square feet of glass and steel, and one of the coolest research buildings in the country. The kind of place where Northeastern\u2019s famous co-op students come back with real-world experience and put it to work.\n\nThere\u2019s something taped to the notice board near the main entrance."},
+{from:"cl",text:"\ud83d\udcdc CLUE FOUND:\n\nThe kidnapper is getting cocky. They left this message:\n\n\"You\u2019ve been so busy chasing clues, you haven\u2019t stopped to think about who I am. Let me give you a hint about myself:\n\nI am NOT a current student.\nI was here when the oldest arena on campus still stood.\nMy favorite number is the amount of varsity sports Northeastern has.\nI always root AGAINST the Huskies.\"\n\nHow many varsity sports does the school have?\n\n(Just the number)"}
+],hints:["Coach: Think about how many different sports you see at NEU. More than 15 but fewer than 20.","Coach: Northeastern has 18 varsity sports. That includes hockey, basketball, soccer, rowing, and more."],
+ans:["18","eighteen"],pr:"18",
+ok:"18 varsity sports \u2014 that\u2019s the kidnapper\u2019s favorite number. And they said they \"root AGAINST the Huskies\"... so they\u2019re a rival fan. And they knew Matthews Arena...\n\nKeep that in mind. We\u2019re building a profile.\n\nThe kidnapper\u2019s note continues:\n\"Your final destination is a place of endings and beginnings. Where the oldest arena once stood, now only ghosts and construction remain. Come say goodbye.\"\n\nHead toward the Matthews Arena construction site \u2014 about a 5-minute walk toward St. Botolph Street. Type READY when you arrive."},
+
+{id:6,title:"Stop 6 \u2014 Ghosts of Matthews",loc:"Matthews Arena Construction Site (St. Botolph St side)",messages:[
+{from:"nr",text:"Here it is. Or... here it was.\n\nMatthews Arena stood here for 115 years. The oldest multi-purpose arena in the world. The Bruins played their first home game here. The Celtics too. Generations of Huskies grew up in those stands.\n\nNow it\u2019s rubble and excavators. They\u2019re building something incredible in its place \u2014 a 310,000 square foot athletics complex opening in 2028. But today, it\u2019s a construction site and a whole lot of memories.\n\nLook around the fencing. The kidnapper left one final message."},
+{from:"cl",text:"\ud83d\udcdc FINAL CLUE:\n\n\"Congratulations. You\u2019ve proven yourself a true Husky. But to get Paws back, you need to tell me WHO I AM.\n\nHere\u2019s everything you know about me:\n\u2022 I root against the Huskies\n\u2022 I was here when Matthews Arena still stood\n\u2022 My favorite number is 18\n\u2022 I left my first clue at the site of a game between the Boston Americans and the Pittsburgh Pirates\n\nThe Americans beat the Pirates in 1903. What team do the Pirates represent TODAY? That\u2019s my school.\n\nWhat university am I from? Type just the CITY.\""}
+],hints:["Coach: The Pittsburgh Pirates are from... Pittsburgh. Think about which university from Pennsylvania is a big hockey rival.","Coach: The answer is simply PITTSBURGH. That\u2019s the city the Pirates are from!"],
+ans:["pittsburgh"],pr:"PITTSBURGH",ok:null}
+];
+
+var F=[
+{from:"nr",text:"PITTSBURGH! Of course! A rival fan from out of town, jealous of the Huskies!\n\nI just got a call from campus police \u2014 they found Paws! He was in a crate behind the Cabot Center dumpsters, right back where this all started. He\u2019s safe, a little grumpy, and very hungry."},
+{from:"sy",text:"\ud83d\udc3e\ud83c\udf89 MISSION COMPLETE \u2014 PAWS HAS BEEN RESCUED! \ud83c\udf89\ud83d\udc3e"},
+{from:"nr",text:"You did it! You walked across campus, cracked ciphers, solved logic puzzles, and outsmarted a very petty rival fan.\n\nYou\u2019re a true Northeastern Husky. Paws is safe, and Saturday\u2019s game is ON.\n\n\ud83d\udc3e Thanks for playing The Husky Heist!\nA Riddle Quest by RiddleQuest.com"}
+];
+
+var g={cs:0,dm:[],hu:0,wr:false,wa:false,tr:false,tp:false,fin:false,st:null,el:0,ps:null,tpd:0};
+var app=document.getElementById("app");
+
+function pad(n){return n<10?"0"+n:""+n}
+function fmt(ms){var s=Math.floor(ms/1000);var m=Math.floor(s/60);s=s%60;var h=Math.floor(m/60);m=m%60;return pad(h)+":"+pad(m)+":"+pad(s)}
+function esc(t){var d=document.createElement("div");d.textContent=t;return d.innerHTML.replace(/\n/g,"<br>")}
+
+function render(){
+var stop=S[g.cs];
+var h="";
+h+='<div class="hdr"><div style="font-size:56px">\ud83d\udc3e</div>';
+h+='<h1>The Husky Heist</h1>';
+h+='<div class="sub">A Northeastern Riddle Quest</div>';
+h+='<div class="badges"><span class="badge">\u23f1 ~1 hour</span><span class="badge">\ud83d\udeb6 ~1 mile loop</span><span class="badge">\ud83d\udccd NEU Boston Campus</span></div></div>';
+
+h+='<div class="dots">';
+for(var i=0;i<S.length;i++){
+var c="dot";if(i<g.cs)c+=" ok";if(i===g.cs)c+=" on";
+h+='<div class="'+c+'"></div>';}
+h+='</div>';
+
+if(g.tr||g.fin){
+var el=g.el;if(g.tr&&!g.tp)el=Date.now()-g.st-g.tpd;
+var lb=g.fin?"Final Time":g.tp?"Paused":"Elapsed";
+h+='<div class="tbar"><div><div class="lb">'+lb+'</div><div class="tm" id="td">'+fmt(el)+'</div></div>';
+if(!g.fin){var pc=g.tp?' ps':'';var bt=g.tp?'\u25b6 Resume':'\u23f8 Pause';
+h+='<button class="tbtn'+pc+'" onclick="tp()">'+bt+'</button>';}
+h+='</div>';}
+
+if(g.cs>0&&stop){
+h+='<div class="stitle"><div>'+esc(stop.title)+'</div><div>\ud83d\udccd '+esc(stop.loc)+'</div></div>';}
+
+h+='<div id="msgs">';
+for(var j=0;j<g.dm.length;j++){
+var msg=g.dm[j];var f=msg.from;var t=msg.text;
+if(f==="nr")h+='<div class="mc"><div class="m nr"><div class="sn" style="color:var(--red)">\ud83d\udd0d Coach</div>'+esc(t)+'</div></div>';
+else if(f==="cl")h+='<div class="mc"><div class="m cl"><div class="sn" style="color:#9b59b6">\ud83d\udcdc Clue</div>'+esc(t)+'</div></div>';
+else if(f==="pl")h+='<div class="mc"><div class="m pl">'+esc(t)+'</div></div>';
+else if(f==="sy")h+='<div class="mc"><div class="m sy">'+esc(t)+'</div></div>';
+else if(f==="lu")h+='<div class="mc"><div class="m lu"><div class="sn" style="color:var(--gold)">\ud83c\udf55 Halftime</div>'+esc(t)+'</div></div>';
+else if(f==="hi")h+='<div class="mc"><div class="m nr" style="border-color:#3a3a1a"><div class="sn" style="color:var(--gold)">\ud83d\udca1 Hint</div>'+esc(t)+'</div></div>';
+else if(f==="wr")h+='<div class="mc"><div class="m nr" style="border-color:#4a2020"><div class="sn" style="color:#e55">\u274c Coach</div>'+esc(t)+'</div></div>';
+}
+h+='</div>';
+
+if(g.wa&&stop&&!g.fin){
+var mh=stop.hints?stop.hints.length:0;
+h+='<div class="hr">';
+for(var k=0;k<mh;k++){
+var u=g.hu>k;var d=u||g.hu<k;
+var lb2=u?"\ud83d\udca1 Hint "+(k+1)+" \u2713":"\ud83d\udca1 Hint "+(k+1);
+h+='<button class="hb"'+(d?" disabled":"")+' onclick="uh('+k+')">'+lb2+'</button>';}
+h+='<button class="hb" onclick="sa()" style="margin-left:auto;border-color:#4a2020;color:#e55">\ud83c\udff3\ufe0f Show Answer</button></div>';}
+
+if(!g.fin){
+var ph="Type your answer...";
+if(g.wr)ph="Type READY to continue...";
+if(g.cs===0&&g.dm.length<=1)ph="Type START at the statue...";
+if(stop&&stop.id===4&&g.wr)ph="Type DONE when finished...";
+h+='<div class="ia"><input type="text" id="ui" placeholder="'+ph+'" autocomplete="off"></div>';}
+
+h+='<div id="sa" style="height:1px"></div>';
+app.innerHTML=h;
+
+var inp=document.getElementById("ui");
+if(inp){
+inp.addEventListener("keydown",function(e){if(e.key==="Enter")sub()});
+inp.focus();}
+
+var sbtn=document.createElement("button");
+sbtn.className="sbtn";
+sbtn.textContent="\u27a4";
+sbtn.onclick=sub;
+var ia=document.querySelector(".ia");
+if(ia)ia.appendChild(sbtn);
+
+var anc=document.getElementById("sa");
+if(anc)anc.scrollIntoView({behavior:"smooth"});
+}
+
+function ls(idx){
+g.cs=idx;g.hu=0;g.wr=false;g.wa=false;
+var stop=S[idx];if(!stop)return;
+if(stop.id===4&&!g.tp){g.tp=true;g.ps=Date.now();}
+g.dm=stop.messages.slice();
+g.wa=true;
+render();
+}
+
+function sub(){
+var inp=document.getElementById("ui");
+if(!inp)return;
+var v=inp.value.trim();
+if(!v)return;
+var stop=S[g.cs];
+
+if(stop.type==="intro"){
+if(stop.accept.indexOf(v.toLowerCase())!==-1){
+g.dm.push({from:"pl",text:stop.pr});
+g.wa=false;g.tr=true;g.st=Date.now();g.tpd=0;
+render();
+setTimeout(function(){g.dm=[];ls(1);},800);
+}else{
+g.dm.push({from:"pl",text:v});
+g.dm.push({from:"nr",text:"Head to the Cy Young Statue outside Cabot Center and type START when you are ready!"});
+render();}
+return;}
+
+if(g.wr){
+if(v.toLowerCase()==="ready"||v.toLowerCase()==="done"){
+g.dm.push({from:"pl",text:v});g.wr=false;
+if(stop.id===4&&g.ps){g.tpd+=Date.now()-g.ps;g.tp=false;g.ps=null;}
+render();
+setTimeout(function(){g.dm=[];ls(g.cs+1);},600);
+}else{
+g.dm.push({from:"pl",text:v});
+g.dm.push({from:"nr",text:"Type READY when you have arrived! (Or DONE if at the lunch break.)"});
+render();}
+return;}
+
+if(g.wa){
+g.dm.push({from:"pl",text:v});
+var ok=false;
+for(var i=0;i<stop.ans.length;i++){if(stop.ans[i].toLowerCase()===v.toLowerCase()){ok=true;break;}}
+if(ok){
+g.wa=false;
+if(g.cs===S.length-1){
+g.el=Date.now()-g.st-g.tpd;g.tr=false;g.fin=true;
+for(var f=0;f<F.length;f++)g.dm.push(F[f]);
+g.dm.push({from:"sy",text:"\u23f1 Your time: "+fmt(g.el)});
+render();return;}
+g.dm.push({from:"sy",text:"\u2705 Correct!"});
+g.dm.push({from:"nr",text:stop.ok});
+g.wr=true;render();
+}else{
+g.dm.push({from:"wr",text:"Hmm, not quite right. Try again! Use a hint if stuck \u2014 no penalties, just for fun."});
+render();}}}
+
+function uh(idx){
+var stop=S[g.cs];
+if(!stop||!stop.hints||idx>=stop.hints.length)return;
+g.hu=idx+1;
+g.dm.push({from:"hi",text:stop.hints[idx]});
+render();}
+
+function sa(){
+var stop=S[g.cs];if(!stop)return;
+g.hu=stop.hints?stop.hints.length:0;
+g.dm.push({from:"hi",text:"The answer is: "+stop.ans[0].toUpperCase()+"\n\nType it in to continue!"});
+render();}
+
+function tp(){
+if(g.tp){g.tpd+=Date.now()-g.ps;g.tp=false;g.ps=null;}
+else{g.tp=true;g.ps=Date.now();}
+render();}
+
+setInterval(function(){
+if(g.tr&&!g.tp){var el=document.getElementById("td");
+if(el)el.textContent=fmt(Date.now()-g.st-g.tpd);}
+},1000);
+
+ls(0);
+</script>
+</body>
+</html>
