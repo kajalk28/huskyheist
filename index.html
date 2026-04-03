@@ -1,625 +1,609 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2487.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Husky Heist — A Northeastern Riddle Quest</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --red: #c41230;
+    --red-dark: #a00e28;
+    --red-light: #fef2f2;
+    --gold: #d4a843;
+    --bg: #0f0f0f;
+    --card: #1a1a1a;
+    --card-border: #2a2a2a;
+    --text: #e8e8e8;
+    --text-dim: #888;
+    --success: #22c55e;
+    --success-bg: #0a2a14;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 40px 20px 30px;
+    position: relative;
+  }
+  .header .paw { font-size: 56px; margin-bottom: 12px; }
+  .header h1 { font-size: 32px; font-weight: 900; color: var(--red); letter-spacing: -0.5px; }
+  .header .sub { font-size: 14px; color: var(--text-dim); margin-top: 4px; }
+  .header .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+  .badge {
+    font-size: 12px; background: var(--card); border: 1px solid var(--card-border);
+    padding: 5px 12px; border-radius: 20px; color: var(--text-dim);
+  }
+  
+  /* Timer bar */
+  .timer-bar {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    background: var(--card); border: 1px solid var(--card-border); border-radius: 12px;
+    padding: 12px 16px; margin-bottom: 24px; text-align: center;
+  }
+  .timer-bar .time { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--gold); }
+  .timer-bar .label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+  .timer-btn {
+    background: var(--card-border); border: none; color: var(--text); padding: 6px 14px;
+    border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600;
+  }
+  .timer-btn:hover { background: #333; }
+  .timer-btn.paused { background: var(--red); color: white; }
+  
+  /* Message bubbles */
+  .msg-container { margin-bottom: 12px; }
+  
+  .msg {
+    padding: 14px 16px; border-radius: 16px; font-size: 14px; line-height: 1.7;
+    max-width: 92%; white-space: pre-line; animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  
+  .msg.narrator {
+    background: var(--card); border: 1px solid var(--card-border);
+    margin-right: auto; border-bottom-left-radius: 4px;
+  }
+  .msg.narrator .sender { font-size: 11px; font-weight: 700; color: var(--red); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+  
+  .msg.killer {
+    background: #1a1520; border: 1px solid #2a2030;
+    margin-right: auto; border-bottom-left-radius: 4px;
+    font-family: 'Courier New', monospace; color: #c8a0e8;
+  }
+  .msg.killer .sender { font-size: 11px; font-weight: 700; color: #9b59b6; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+  
+  .msg.player {
+    background: var(--red); color: white;
+    margin-left: auto; border-bottom-right-radius: 4px;
+  }
+  
+  .msg.system {
+    background: var(--success-bg); border: 1px solid #1a4a2a;
+    text-align: center; max-width: 100%; font-weight: 600; color: var(--success);
+  }
+  
+  .msg.lunch {
+    background: #1a1a0a; border: 1px solid #3a3a1a;
+    text-align: center; max-width: 100%;
+  }
+  .msg.lunch .sender { font-size: 11px; font-weight: 700; color: var(--gold); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+  
+  /* Input area */
+  .input-area {
+    display: flex; gap: 8px; margin: 16px 0;
+    position: sticky; bottom: 16px;
+    background: var(--bg); padding: 8px 0;
+  }
+  .input-area input {
+    flex: 1; padding: 12px 16px; border-radius: 24px;
+    background: var(--card); border: 1px solid var(--card-border);
+    color: var(--text); font-size: 14px; font-family: inherit; outline: none;
+  }
+  .input-area input:focus { border-color: var(--red); }
+  .input-area input::placeholder { color: #555; }
+  
+  .send-btn {
+    width: 44px; height: 44px; border-radius: 50%; border: none;
+    background: var(--red); color: white; cursor: pointer; font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .send-btn:hover { background: var(--red-dark); }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  
+  /* Hint buttons */
+  .hint-row { display: flex; gap: 8px; margin: 8px 0 16px; }
+  .hint-btn {
+    padding: 8px 16px; border-radius: 20px; border: 1px solid var(--card-border);
+    background: var(--card); color: var(--text-dim); cursor: pointer;
+    font-size: 12px; font-weight: 600; font-family: inherit; transition: all 0.2s;
+  }
+  .hint-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .hint-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  
+  .progress-dots {
+    display: flex; gap: 6px; justify-content: center; margin: 20px 0;
+  }
+  .dot {
+    width: 10px; height: 10px; border-radius: 50%; background: var(--card-border);
+    transition: all 0.3s;
+  }
+  .dot.active { background: var(--red); transform: scale(1.2); }
+  .dot.done { background: var(--success); }
+  
+  .scroll-anchor { height: 1px; }
+</style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1">&lt;title&gt;The Husky Heist — A Northeastern Riddle Quest&lt;/title&gt;</p>
-<p class="p1">&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap');</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>* { margin: 0; padding: 0; box-sizing: border-box; }</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>:root {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--red: #c41230;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--red-dark: #a00e28;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--red-light: #fef2f2;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--gold: #d4a843;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--bg: #0f0f0f;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--card: #1a1a1a;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--card-border: #2a2a2a;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--text: #e8e8e8;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--text-dim: #888;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--success: #22c55e;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>--success-bg: #0a2a14;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-family: 'Inter', system-ui, sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: var(--bg);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: var(--text);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>line-height: 1.6;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>min-height: 100vh;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.container {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>max-width: 600px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin: 0 auto;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 16px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* Header */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.header {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 40px 20px 30px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>position: relative;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.header .paw { font-size: 56px; margin-bottom: 12px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.header h1 { font-size: 32px; font-weight: 900; color: var(--red); letter-spacing: -0.5px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.header .sub { font-size: 14px; color: var(--text-dim); margin-top: 4px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.header .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.badge {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 12px; background: var(--card); border: 1px solid var(--card-border);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 5px 12px; border-radius: 20px; color: var(--text-dim);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* Timer bar */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.timer-bar {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: flex; align-items: center; justify-content: center; gap: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: var(--card); border: 1px solid var(--card-border); border-radius: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 12px 16px; margin-bottom: 24px; text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.timer-bar .time { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--gold); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.timer-bar .label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.timer-btn {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: var(--card-border); border: none; color: var(--text); padding: 6px 14px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.timer-btn:hover { background: #333; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.timer-btn.paused { background: var(--red); color: white; }</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* Message bubbles */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.msg-container { margin-bottom: 12px; }</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.msg {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 14px 16px; border-radius: 16px; font-size: 14px; line-height: 1.7;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>max-width: 92%; white-space: pre-line; animation: fadeIn 0.3s ease;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.msg.narrator {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: var(--card); border: 1px solid var(--card-border);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-right: auto; border-bottom-left-radius: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.msg.narrator .sender { font-size: 11px; font-weight: 700; color: var(--red); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.msg.killer {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #1a1520; border: 1px solid #2a2030;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-right: auto; border-bottom-left-radius: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-family: 'Courier New', monospace; color: #c8a0e8;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.msg.killer .sender { font-size: 11px; font-weight: 700; color: #9b59b6; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.msg.player {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: var(--red); color: white;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-left: auto; border-bottom-right-radius: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.msg.system {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: var(--success-bg); border: 1px solid #1a4a2a;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>text-align: center; max-width: 100%; font-weight: 600; color: var(--success);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.msg.lunch {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #1a1a0a; border: 1px solid #3a3a1a;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>text-align: center; max-width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.msg.lunch .sender { font-size: 11px; font-weight: 700; color: var(--gold); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* Input area */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.input-area {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: flex; gap: 8px; margin: 16px 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>position: sticky; bottom: 16px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: var(--bg); padding: 8px 0;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.input-area input {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>flex: 1; padding: 12px 16px; border-radius: 24px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: var(--card); border: 1px solid var(--card-border);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: var(--text); font-size: 14px; font-family: inherit; outline: none;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.input-area input:focus { border-color: var(--red); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.input-area input::placeholder { color: #555; }</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.send-btn {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>width: 44px; height: 44px; border-radius: 50%; border: none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: var(--red); color: white; cursor: pointer; font-size: 18px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: flex; align-items: center; justify-content: center;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>flex-shrink: 0;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.send-btn:hover { background: var(--red-dark); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.send-btn:disabled { opacity: 0.4; cursor: not-allowed; }</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* Hint buttons */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.hint-row { display: flex; gap: 8px; margin: 8px 0 16px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.hint-btn {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 8px 16px; border-radius: 20px; border: 1px solid var(--card-border);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: var(--card); color: var(--text-dim); cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 12px; font-weight: 600; font-family: inherit; transition: all 0.2s;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.hint-btn:hover { border-color: var(--gold); color: var(--gold); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.hint-btn:disabled { opacity: 0.3; cursor: not-allowed; }</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.progress-dots {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: flex; gap: 6px; justify-content: center; margin: 20px 0;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.dot {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>width: 10px; height: 10px; border-radius: 50%; background: var(--card-border);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>transition: all 0.3s;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.dot.active { background: var(--red); transform: scale(1.2); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.dot.done { background: var(--success); }</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.scroll-anchor { height: 1px; }</p>
-<p class="p1">&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1">&lt;div class="container" id="app"&gt;&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1">const STOPS = [</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>id: 0,</p>
-<p class="p1"><span class="Apple-converted-space">    </span>type: "intro",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>messages: [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ from: "narrator", text: "🐾 Hey there, Husky! It's Coach. I need your help — this is urgent.\n\nPaws has gone missing. Our beloved mascot was last seen near Cabot Center before yesterday's pep rally, and now there's no sign of him anywhere. Campus police found a torn note near his kennel that said:\n\n\"Want him back? Prove you're a real Northeastern Husky. Follow my trail.\"\n\nSomeone's playing games with us. I need you to follow the clues this creep left behind, figure out where they're hiding Paws, and bring him home before Saturday's game.\n\nI'll be your guide over text. Head to the Cy Young Statue outside Cabot Center to start — you know, the bronze pitcher on the old World Series grounds. When you're there, type START." },</p>
-<p class="p1"><span class="Apple-converted-space">    </span>],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>accept: ["START", "start", "Start"],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>playerResponse: "I'm at the statue. Let's find Paws.",</p>
-<p class="p1"><span class="Apple-converted-space">  </span>},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>id: 1,</p>
-<p class="p1"><span class="Apple-converted-space">    </span>title: "Stop 1 — The Pitcher's Mound",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>location: "Cy Young Statue, outside Cabot Center",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>messages: [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ from: "narrator", text: "Good, you're here. The Cy Young statue — standing on the exact spot where the first-ever World Series was played. Pretty legendary ground.\n\nLook around the statue and its plaque. There should be something taped to the back of the base. See it? It's the first clue from our mystery kidnapper." },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ from: "clue", text: "📜 CLUE FOUND:\n\nYou're standing where history hit a home run. The year it all started is etched in stone right in front of you.\n\nTake that year. Add up all four of its digits. That number is your first key.\n\nNow look: what sport made this ground famous?\n\nYour answer: the digit sum, followed by the sport.\nExample format: 15HOCKEY" },</p>
-<p class="p1"><span class="Apple-converted-space">    </span>],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>hints: [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"Coach: The first World Series happened in the early 1900s. The year starts with \"19...\" Look closely at the plaque!",</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"Coach: Okay — the year is 1903. Add those digits: 1+9+0+3. And the sport? Think about what a pitcher does..."</p>
-<p class="p1"><span class="Apple-converted-space">    </span>],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>answer: ["13BASEBALL", "13baseball", "13 baseball", "13 Baseball"],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>playerResponse: "13BASEBALL",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>successMsg: "That's it! 1903, digits add to 13, and the sport is baseball. The first World Series, right under our feet.\n\nThere's something else written on the back of that note. It says:\n\n\"Head to where the bricks hold memories and one holds a question that changed someone's life forever. Walk toward the big open green space with the brick pathways — Centennial Common.\"\n\nThat's about a 3-minute walk toward Ryder Hall. Let me know when you arrive — type READY."</p>
-<p class="p1"><span class="Apple-converted-space">  </span>},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>id: 2,</p>
-<p class="p1"><span class="Apple-converted-space">    </span>title: "Stop 2 — Written in Brick",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>location: "Centennial Common, near Ryder Hall",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>messages: [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ from: "narrator", text: "Centennial Common — the heart of campus. See all those bricks lining the pathways? Most of them are engraved with donor names. But one of them is different. Very different.\n\nSomewhere near Ryder Hall, there's a brick that doesn't have a name on it. Instead, it has a question. A romantic one. Find it." },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ from: "clue", text: "📜 CLUE FOUND (on a card tucked between the bricks):\n\nYou found the love brick! Someone literally carved their heart into this campus.\n\nNow here's your task. The kidnapper left a coded message. Each letter has been shifted forward by 3 positions in the alphabet (A→D, B→E, etc). Shift each letter BACKWARD by 3 to decode it:\n\nKHDG WR WKH WXQQHOV\n\nWhat does the decoded message say? Type it in exactly." },</p>
-<p class="p1"><span class="Apple-converted-space">    </span>],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>hints: [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"Coach: It's called a Caesar cipher. Go letter by letter and shift each one back by 3. So K→H, H→E, D→A, G→D...",</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"Coach: The first word decodes to HEAD. Keep going — W→T, R→O... You've got this!"</p>
-<p class="p1"><span class="Apple-converted-space">    </span>],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>answer: ["HEAD TO THE TUNNELS", "head to the tunnels", "Head to the tunnels", "Head To The Tunnels"],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>playerResponse: "HEAD TO THE TUNNELS",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>successMsg: "\"HEAD TO THE TUNNELS\" — nice work cracking that cipher!\n\nThe tunnels... Northeastern has an underground tunnel system that connects 11 buildings across campus. The main entrance is near the Bookstore by Snell Library.\n\nBut wait — there's more writing on that card. The kidnapper added:\n\n\"Before you go underground, stop by the strange bronze figure lounging near Curry Student Center. She's got something for you.\"\n\nThat's just a 2-minute walk from here. Head toward Curry and look for the Reclining Figure sculpture. Type READY when you're there."</p>
-<p class="p1"><span class="Apple-converted-space">  </span>},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>id: 3,</p>
-<p class="p1"><span class="Apple-converted-space">    </span>title: "Stop 3 — The Director's Chair",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>location: "Reclining Figure Sculpture, Curry Student Center",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>messages: [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ from: "narrator", text: "There she is — the bronze Reclining Figure. Most people walk right past her, but she's got a great origin story.\n\nThis sculpture was created by someone who was WAY more famous for making movies than making art. Specifically, a comedy franchise about a very clumsy French detective.\n\nThere's a sealed envelope tucked at the base of the sculpture." },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ from: "clue", text: "📜 CLUE FOUND:\n\nThe detective from those movies has a name you definitely know — even if you can't spell it.\n\nWho am I? \"I am the bumbling French detective from Blake Edwards' most famous film franchise. I chase jewel thieves and destroy everything in my path.\"\n\nWhat is my LAST NAME?\n\n(Just the last name, one word)" },</p>
-<p class="p1"><span class="Apple-converted-space">    </span>],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>hints: [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"Coach: Blake Edwards directed The Pink Panther movies. The main character is Inspector _______.",</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"Coach: It's Inspector CLOUSEAU — played by Peter Sellers. Tricky to spell! C-L-O-U-S-E-A-U."</p>
-<p class="p1"><span class="Apple-converted-space">    </span>],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>answer: ["CLOUSEAU", "clouseau", "Clouseau"],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>playerResponse: "CLOUSEAU",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>successMsg: "Inspector Clouseau! Blake Edwards — the guy who directed The Pink Panther — made this sculpture. Who knew Hollywood directors moonlighted as bronze artists?\n\nInside the envelope there's another note from our kidnapper:\n\n\"Impressive. But can you find your way in the dark? Go underground. The primary tunnel entrance is near the Bookstore, next to Snell Library.\"\n\nHead to Snell Library — about 3 minutes from here. Type READY when you arrive."</p>
-<p class="p1"><span class="Apple-converted-space">  </span>},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>id: 4,</p>
-<p class="p1"><span class="Apple-converted-space">    </span>title: "🍕 HALFTIME — Lunch Break + Sit-Down Puzzle",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>location: "Snell Library area / grab food nearby",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>messages: [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ from: "lunch", text: "⏸️ HALFTIME BREAK\n\nNice work — you're halfway through! The timer is paused. Grab lunch, take a breather, catch up with your team.\n\n🍕 Nearby food spots:\n• Curry Student Center food court (2 min walk)\n• Wollaston's Market in International Village\n• Tatte Bakery on Huntington Ave\n• Rebecca's Cafe in Ell Hall\n\nWhile you eat, work on the sit-down puzzle below. It's from the kidnapper — apparently they like logic games.\n\nType DONE when you've finished eating and solved the puzzle to restart the timer." },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ from: "clue", text: "📜 SIT-DOWN PUZZLE — The Tunnel Map\n\nNortheastern's tunnel system connects 11 buildings. The kidnapper left this logic puzzle:\n\nFive students — Ayla, Ben, Carmen, Dev, and Elena — each entered the tunnels from a different building. Figure out who entered from SNELL LIBRARY:\n\n1. Ayla entered from a building whose name starts with a vowel.\n2. Ben did NOT enter from Dodge Hall or Ell Hall.\n3. Carmen entered from the building that comes alphabetically just before Dev's building.\n4. Elena entered from Richards Hall.\n5. The five buildings are: Cabot Gym, Dodge Hall, Ell Hall, Richards Hall, Snell Library.\n\nWho entered from Snell Library? Type their name." },</p>
-<p class="p1"><span class="Apple-converted-space">    </span>],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>hints: [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"Coach: Start with the sure things. Elena = Richards Hall (given). Ayla needs a vowel-starting building — that's Ell Hall.",</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"Coach: Carmen's building is alphabetically just before Dev's. That leaves Cabot Gym, Dodge Hall, and Snell Library for Ben/Carmen/Dev. Cabot comes before Dodge alphabetically... so Carmen = Cabot, Dev = Dodge. Who's left for Snell?"</p>
-<p class="p1"><span class="Apple-converted-space">    </span>],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>answer: ["BEN", "ben", "Ben"],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>playerResponse: "BEN",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>successMsg: "Ben! Nice one. Elena = Richards, Ayla = Ell Hall, Carmen = Cabot, Dev = Dodge, and Ben = Snell Library.\n\nOkay, break's over. The kidnapper's message continues:\n\n\"You figured out my tunnel puzzle, but you still don't know WHO I am. Head to ISEC — that big glass building — and look for the next clue near the main entrance.\"\n\nISEC (the Interdisciplinary Science and Engineering Complex) is about a 4-minute walk. Type READY when you're there."</p>
-<p class="p1"><span class="Apple-converted-space">  </span>},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>id: 5,</p>
-<p class="p1"><span class="Apple-converted-space">    </span>title: "Stop 5 — The Glass Giant",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>location: "ISEC (Interdisciplinary Science and Engineering Complex)",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>messages: [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ from: "narrator", text: "ISEC — 220,000 square feet of glass and steel, and one of the coolest research buildings in the country. The kind of place where Northeastern's famous co-op students come back with real-world experience and put it to work.\n\nThere's something taped to the notice board near the main entrance." },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ from: "clue", text: "📜 CLUE FOUND:\n\nThe kidnapper is getting cocky. They left this message:\n\n\"You've been so busy chasing clues, you haven't stopped to think about who I am. Let me give you a hint about myself:\n\nI am NOT a current student.\nI was here when the oldest arena on campus still stood.\nMy favorite number is the amount of varsity sports Northeastern has.\nI always root AGAINST the Huskies.\"\n\nHere's your question: Northeastern's teams compete in NCAA Division I. How many varsity sports does the school have?\n\n(Just the number)" },</p>
-<p class="p1"><span class="Apple-converted-space">    </span>],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>hints: [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"Coach: Think about how many different sports you see at NEU. It's more than 15 but fewer than 20.",</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"Coach: Northeastern has 18 varsity sports. That includes hockey, basketball, soccer, rowing, and more."</p>
-<p class="p1"><span class="Apple-converted-space">    </span>],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>answer: ["18", "eighteen"],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>playerResponse: "18",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>successMsg: "18 varsity sports — that's the kidnapper's favorite number. And they said they \"root AGAINST the Huskies\"... so they're a rival fan. And they knew Matthews Arena...\n\nKeep that in mind. We're building a profile.\n\nThe kidnapper's note continues:\n\"Your final destination is a place of endings and beginnings. Where the oldest arena once stood, now only ghosts and construction remain. Come say goodbye.\"\n\nHead toward the Matthews Arena construction site — where they're building the new athletics complex. It's about a 5-minute walk toward St. Botolph Street. Type READY when you arrive."</p>
-<p class="p1"><span class="Apple-converted-space">  </span>},</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{</p>
-<p class="p1"><span class="Apple-converted-space">    </span>id: 6,</p>
-<p class="p1"><span class="Apple-converted-space">    </span>title: "Stop 6 — Ghosts of Matthews",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>location: "Matthews Arena Construction Site (St. Botolph St side)",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>messages: [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ from: "narrator", text: "Here it is. Or... here it was.\n\nMatthews Arena stood here for 115 years. The oldest multi-purpose arena in the world. The Bruins played their first home game here. The Celtics too. Generations of Huskies grew up in those stands.\n\nNow it's rubble and excavators. They're building something incredible in its place — a 310,000 square foot athletics complex opening in 2028. But today, it's a construction site and a whole lot of memories.\n\nLook around the fencing. The kidnapper left one final message." },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ from: "clue", text: "📜 FINAL CLUE:\n\n\"Congratulations. You've proven yourself a true Husky. But to get Paws back, you need to tell me WHO I AM.\n\nHere's everything you know about me:\n• I root against the Huskies\n• I was here when Matthews Arena still stood\n• My favorite number is 18\n• I left my first clue at the site of a game between the Boston Americans and the Pittsburgh Pirates\n\nThe Americans beat the Pirates in 1903. What team do the Pirates represent TODAY? That's my school.\n\nWhat university am I from? Type just the CITY.\"\n\n(Hint: think about where the Pittsburgh Pirates are from... and which university's fans are Northeastern's biggest hockey rivals from that state.)" },</p>
-<p class="p1"><span class="Apple-converted-space">    </span>],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>hints: [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"Coach: The Pittsburgh Pirates are from... Pittsburgh. But think about college rivalries. Which university from the state of Pennsylvania is a big hockey rival?",</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"Coach: Okay this is a bit of a trick — the Pittsburgh Pirates' city is the answer. The kidnapper is from PITTSBURGH. But actually, re-read: they said \"What university am I from? Type just the CITY.\" The answer is simply PITTSBURGH."</p>
-<p class="p1"><span class="Apple-converted-space">    </span>],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>answer: ["PITTSBURGH", "pittsburgh", "Pittsburgh"],</p>
-<p class="p1"><span class="Apple-converted-space">    </span>playerResponse: "PITTSBURGH",</p>
-<p class="p1"><span class="Apple-converted-space">    </span>successMsg: null</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1">];</p>
-<p class="p2"><br></p>
-<p class="p1">const FINALE = [</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ from: "narrator", text: "PITTSBURGH! Of course! A rival fan from out of town, jealous of the Huskies!\n\nI just got a call from campus police — they found Paws! He was in a crate behind the Cabot Center dumpsters, right back where this all started. He's safe, a little grumpy, and very hungry." },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ from: "system", text: "🐾🎉 MISSION COMPLETE — PAWS HAS BEEN RESCUED! 🎉🐾" },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ from: "narrator", text: "You did it! You walked across campus, cracked ciphers, solved logic puzzles, and outsmarted a very petty rival fan.\n\nYou're a true Northeastern Husky. Paws is safe, and Saturday's game is ON.\n\n🐾 Thanks for playing The Husky Heist!\nA Riddle Quest by RiddleQuest.com" },</p>
-<p class="p1">];</p>
-<p class="p2"><br></p>
-<p class="p1">// ---- APP STATE ----</p>
-<p class="p1">let state = {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>currentStop: 0,</p>
-<p class="p1"><span class="Apple-converted-space">  </span>msgQueue: [],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>displayedMsgs: [],</p>
-<p class="p1"><span class="Apple-converted-space">  </span>hintsUsed: 0,</p>
-<p class="p1"><span class="Apple-converted-space">  </span>waitingForReady: false,</p>
-<p class="p1"><span class="Apple-converted-space">  </span>waitingForAnswer: false,</p>
-<p class="p1"><span class="Apple-converted-space">  </span>puzzleSolved: false,</p>
-<p class="p1"><span class="Apple-converted-space">  </span>timerRunning: false,</p>
-<p class="p1"><span class="Apple-converted-space">  </span>timerPaused: false,</p>
-<p class="p1"><span class="Apple-converted-space">  </span>startTime: null,</p>
-<p class="p1"><span class="Apple-converted-space">  </span>elapsed: 0,</p>
-<p class="p1"><span class="Apple-converted-space">  </span>pauseStart: null,</p>
-<p class="p1"><span class="Apple-converted-space">  </span>totalPaused: 0,</p>
-<p class="p1"><span class="Apple-converted-space">  </span>finished: false,</p>
-<p class="p1">};</p>
-<p class="p2"><br></p>
-<p class="p1">function $(sel) { return document.querySelector(sel); }</p>
-<p class="p2"><br></p>
-<p class="p1">function formatTime(ms) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let s = Math.floor(ms / 1000);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let m = Math.floor(s / 60);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>s = s % 60;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let h = Math.floor(m / 60);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>m = m % 60;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function render() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const app = $('#app');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const stop = STOPS[state.currentStop];</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>let html = `</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="header"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="paw"&gt;🐾&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;h1&gt;The Husky Heist&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="sub"&gt;A Northeastern Riddle Quest&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="badges"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="badge"&gt;⏱ ~1 hour&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="badge"&gt;🚶 ~1 mile loop&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="badge"&gt;📍 NEU Boston Campus&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="progress-dots"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>${STOPS.map((s, i) =&gt; `&lt;div class="dot ${i &lt; state.currentStop ? 'done' : i === state.currentStop ? 'active' : ''}"&gt;&lt;/div&gt;`).join('')}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>`;</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Timer</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (state.timerRunning || state.finished) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let elapsed = state.elapsed;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (state.timerRunning &amp;&amp; !state.timerPaused) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>elapsed = Date.now() - state.startTime - state.totalPaused;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>html += `</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="timer-bar"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="label"&gt;${state.finished ? 'Final Time' : state.timerPaused ? 'Paused' : 'Elapsed'}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="time" id="timerDisplay"&gt;${formatTime(elapsed)}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>${!state.finished ? `&lt;button class="timer-btn ${state.timerPaused ? 'paused' : ''}" onclick="togglePause()"&gt;${state.timerPaused ? '▶ Resume' : '⏸ Pause'}&lt;/button&gt;` : ''}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>`;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Stop title</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (state.currentStop &gt; 0 &amp;&amp; stop) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>html += `&lt;div style="text-align:center;margin-bottom:16px;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="font-size:13px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1px;"&gt;${stop.title}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="font-size:12px;color:var(--text-dim);margin-top:2px;"&gt;📍 ${stop.location}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Messages</p>
-<p class="p1"><span class="Apple-converted-space">  </span>html += `&lt;div id="messages"&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>for (const msg of state.displayedMsgs) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (msg.from === 'narrator') {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>html += `&lt;div class="msg-container"&gt;&lt;div class="msg narrator"&gt;&lt;div class="sender"&gt;🔍 Coach&lt;/div&gt;${escHtml(msg.text)}&lt;/div&gt;&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else if (msg.from === 'clue') {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>html += `&lt;div class="msg-container"&gt;&lt;div class="msg killer"&gt;&lt;div class="sender"&gt;📜 Clue&lt;/div&gt;${escHtml(msg.text)}&lt;/div&gt;&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else if (msg.from === 'player') {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>html += `&lt;div class="msg-container"&gt;&lt;div class="msg player"&gt;${escHtml(msg.text)}&lt;/div&gt;&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else if (msg.from === 'system') {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>html += `&lt;div class="msg-container"&gt;&lt;div class="msg system"&gt;${escHtml(msg.text)}&lt;/div&gt;&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else if (msg.from === 'lunch') {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>html += `&lt;div class="msg-container"&gt;&lt;div class="msg lunch"&gt;&lt;div class="sender"&gt;🍕 Halftime&lt;/div&gt;${escHtml(msg.text)}&lt;/div&gt;&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else if (msg.from === 'hint') {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>html += `&lt;div class="msg-container"&gt;&lt;div class="msg narrator" style="border-color:#3a3a1a;"&gt;&lt;div class="sender" style="color:var(--gold);"&gt;💡 Hint&lt;/div&gt;${escHtml(msg.text)}&lt;/div&gt;&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else if (msg.from === 'wrong') {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>html += `&lt;div class="msg-container"&gt;&lt;div class="msg narrator" style="border-color:#4a2020;"&gt;&lt;div class="sender" style="color:#e55;"&gt;❌ Coach&lt;/div&gt;${escHtml(msg.text)}&lt;/div&gt;&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>html += `&lt;/div&gt;`;</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Hint buttons</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (state.waitingForAnswer &amp;&amp; stop &amp;&amp; !state.finished) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const maxHints = stop.hints ? stop.hints.length : 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>html += `&lt;div class="hint-row"&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>for (let i = 0; i &lt; maxHints; i++) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const used = state.hintsUsed &gt; i;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>html += `&lt;button class="hint-btn" ${used || state.hintsUsed &lt; i ? 'disabled' : ''} onclick="useHint(${i})"&gt;${used ? '💡 Hint ' + (i+1) + ' ✓' : '💡 Hint ' + (i+1)}&lt;/button&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>html += `&lt;button class="hint-btn" onclick="showAnswer()" style="margin-left:auto;border-color:#4a2020;color:#e55;"&gt;🏳️ Show Answer&lt;/button&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>html += `&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Input</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!state.finished) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let placeholder = "Type your answer...";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (state.waitingForReady) placeholder = "Type READY to continue...";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (state.currentStop === 0 &amp;&amp; state.displayedMsgs.length &lt;= 1) placeholder = "Type START when you're at the statue...";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (stop &amp;&amp; stop.id === 4 &amp;&amp; state.waitingForReady) placeholder = "Type DONE when you've eaten &amp; solved it...";</p>
-<p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>html += `</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="input-area"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="text" id="userInput" placeholder="${placeholder}" onkeydown="if(event.key==='Enter')submitAnswer()" autocomplete="off" autocapitalize="off" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="send-btn" onclick="submitAnswer()"&gt;➤&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>`;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>html += `&lt;div class="scroll-anchor" id="scrollAnchor"&gt;&lt;/div&gt;`;</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>app.innerHTML = html;</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Auto-scroll</p>
-<p class="p1"><span class="Apple-converted-space">  </span>setTimeout(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const anchor = document.getElementById('scrollAnchor');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (anchor) anchor.scrollIntoView({ behavior: 'smooth' });</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const input = document.getElementById('userInput');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (input) input.focus();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}, 50);</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function escHtml(text) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return text.replace(/&amp;/g,'&amp;amp;').replace(/&lt;/g,'&amp;lt;').replace(/&gt;/g,'&amp;gt;').replace(/\n/g,'&lt;br&gt;');</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function startStop(idx) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>state.currentStop = idx;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>state.hintsUsed = 0;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>state.puzzleSolved = false;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>state.waitingForReady = false;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>state.waitingForAnswer = false;</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const stop = STOPS[idx];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!stop) return;</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Queue messages with delays</p>
-<p class="p1"><span class="Apple-converted-space">  </span>state.msgQueue = [...stop.messages];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>showNextQueued();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function showNextQueued() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (state.msgQueue.length === 0) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// All messages shown, now wait for input</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const stop = STOPS[state.currentStop];</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (stop.type === "intro") {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.waitingForReady = false;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.waitingForAnswer = true;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.waitingForAnswer = true;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const msg = state.msgQueue.shift();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>state.displayedMsgs.push(msg);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>render();</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (state.msgQueue.length &gt; 0) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setTimeout(showNextQueued, 600);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>showNextQueued();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function submitAnswer() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const input = document.getElementById('userInput');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!input) return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const val = input.value.trim();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!val) return;</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const stop = STOPS[state.currentStop];</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Intro stop</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (stop.type === "intro") {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (stop.accept.includes(val)) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.displayedMsgs.push({ from: 'player', text: stop.playerResponse });</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.waitingForAnswer = false;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Start timer</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.timerRunning = true;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.startTime = Date.now();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.totalPaused = 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Move to stop 1 after brief delay</p>
-<p class="p1"><span class="Apple-converted-space">      </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setTimeout(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>state.displayedMsgs = [];</p>
-<p class="p1"><span class="Apple-converted-space">        </span>startStop(1);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}, 800);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.displayedMsgs.push({ from: 'player', text: val });</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.displayedMsgs.push({ from: 'narrator', text: "Head to the Cy Young Statue outside Cabot Center and type START when you're ready!" });</p>
-<p class="p1"><span class="Apple-converted-space">      </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Check for READY responses between stops</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (state.waitingForReady) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const readyWords = ["READY", "ready", "Ready", "DONE", "done", "Done"];</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (readyWords.includes(val)) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.displayedMsgs.push({ from: 'player', text: val });</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.waitingForReady = false;</p>
-<p class="p2"><span class="Apple-converted-space">      </span></p>
-<p class="p1"><span class="Apple-converted-space">      </span>// If it's the lunch stop DONE, unpause timer</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (stop.id === 4 &amp;&amp; state.timerPaused) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>state.totalPaused += Date.now() - state.pauseStart;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>state.timerPaused = false;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>state.pauseStart = null;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p2"><span class="Apple-converted-space">      </span></p>
-<p class="p1"><span class="Apple-converted-space">      </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setTimeout(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>state.displayedMsgs = [];</p>
-<p class="p1"><span class="Apple-converted-space">        </span>startStop(state.currentStop + 1);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}, 600);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.displayedMsgs.push({ from: 'player', text: val });</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.displayedMsgs.push({ from: 'narrator', text: "Type READY when you've arrived at the next location! (Or DONE if you're at the lunch break.)" });</p>
-<p class="p1"><span class="Apple-converted-space">      </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><span class="Apple-converted-space">  </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Check answer</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (state.waitingForAnswer) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>state.displayedMsgs.push({ from: 'player', text: val });</p>
-<p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (stop.answer.includes(val) || stop.answer.map(a =&gt; a.toUpperCase()).includes(val.toUpperCase())) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.puzzleSolved = true;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.waitingForAnswer = false;</p>
-<p class="p2"><span class="Apple-converted-space">      </span></p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Last stop?</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (state.currentStop === STOPS.length - 1) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Finale!</p>
-<p class="p1"><span class="Apple-converted-space">        </span>state.elapsed = Date.now() - state.startTime - state.totalPaused;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>state.timerRunning = false;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>state.finished = true;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>for (const msg of FINALE) {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>state.displayedMsgs.push(msg);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>state.displayedMsgs.push({ from: 'system', text: `⏱ Your time: ${formatTime(state.elapsed)}` });</p>
-<p class="p1"><span class="Apple-converted-space">        </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p2"><span class="Apple-converted-space">      </span></p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Success message</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.displayedMsgs.push({ from: 'system', text: "✅ Correct!" });</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.displayedMsgs.push({ from: 'narrator', text: stop.successMsg });</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.waitingForReady = true;</p>
-<p class="p2"><span class="Apple-converted-space">      </span></p>
-<p class="p1"><span class="Apple-converted-space">      </span>// Auto-pause for lunch stop</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (STOPS[state.currentStop + 1] &amp;&amp; STOPS[state.currentStop + 1].id === 4) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// The next stop is the lunch break — it will auto-pause when it loads</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (stop.id === 3) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// After stop 3 success, the next stop (4) is lunch — pause timer when they get there</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p2"><span class="Apple-converted-space">      </span></p>
-<p class="p1"><span class="Apple-converted-space">      </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>state.displayedMsgs.push({ from: 'wrong', text: "Hmm, that's not quite right. Try again! Use a hint if you're stuck — no penalties, this is just for fun." });</p>
-<p class="p1"><span class="Apple-converted-space">      </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function useHint(idx) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const stop = STOPS[state.currentStop];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!stop || !stop.hints || idx &gt;= stop.hints.length) return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>state.hintsUsed = idx + 1;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>state.displayedMsgs.push({ from: 'hint', text: stop.hints[idx] });</p>
-<p class="p1"><span class="Apple-converted-space">  </span>render();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function showAnswer() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const stop = STOPS[state.currentStop];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!stop) return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const ans = stop.answer[0];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>state.displayedMsgs.push({ from: 'hint', text: `The answer is: ${ans}\n\nType it in to continue!` });</p>
-<p class="p1"><span class="Apple-converted-space">  </span>state.hintsUsed = stop.hints ? stop.hints.length : 0;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>render();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function togglePause() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (state.timerPaused) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>state.totalPaused += Date.now() - state.pauseStart;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>state.timerPaused = false;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>state.pauseStart = null;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>state.timerPaused = true;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>state.pauseStart = Date.now();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>render();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// Timer update</p>
-<p class="p1">setInterval(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (state.timerRunning &amp;&amp; !state.timerPaused) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const el = document.getElementById('timerDisplay');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (el) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const elapsed = Date.now() - state.startTime - state.totalPaused;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>el.textContent = formatTime(elapsed);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1">}, 1000);</p>
-<p class="p2"><br></p>
-<p class="p1">// Auto-pause on lunch stop</p>
-<p class="p1">const origStartStop = startStop;</p>
-<p class="p1">startStop = function(idx) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>origStartStop(idx);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (STOPS[idx] &amp;&amp; STOPS[idx].id === 4 &amp;&amp; !state.timerPaused) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>state.timerPaused = true;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>state.pauseStart = Date.now();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1">};</p>
-<p class="p2"><br></p>
-<p class="p1">// Init</p>
-<p class="p1">startStop(0);</p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+<div class="container" id="app"></div>
+
+<script>
+const STOPS = [
+  {
+    id: 0,
+    type: "intro",
+    messages: [
+      { from: "narrator", text: "🐾 Hey there, Husky! It's Coach. I need your help — this is urgent.\n\nPaws has gone missing. Our beloved mascot was last seen near Cabot Center before yesterday's pep rally, and now there's no sign of him anywhere. Campus police found a torn note near his kennel that said:\n\n\"Want him back? Prove you're a real Northeastern Husky. Follow my trail.\"\n\nSomeone's playing games with us. I need you to follow the clues this creep left behind, figure out where they're hiding Paws, and bring him home before Saturday's game.\n\nI'll be your guide over text. Head to the Cy Young Statue outside Cabot Center to start — you know, the bronze pitcher on the old World Series grounds. When you're there, type START." },
+    ],
+    accept: ["START", "start", "Start"],
+    playerResponse: "I'm at the statue. Let's find Paws.",
+  },
+  {
+    id: 1,
+    title: "Stop 1 — The Pitcher's Mound",
+    location: "Cy Young Statue, outside Cabot Center",
+    messages: [
+      { from: "narrator", text: "Good, you're here. The Cy Young statue — standing on the exact spot where the first-ever World Series was played. Pretty legendary ground.\n\nLook around the statue and its plaque. There should be something taped to the back of the base. See it? It's the first clue from our mystery kidnapper." },
+      { from: "clue", text: "📜 CLUE FOUND:\n\nYou're standing where history hit a home run. The year it all started is etched in stone right in front of you.\n\nTake that year. Add up all four of its digits. That number is your first key.\n\nNow look: what sport made this ground famous?\n\nYour answer: the digit sum, followed by the sport.\nExample format: 15HOCKEY" },
+    ],
+    hints: [
+      "Coach: The first World Series happened in the early 1900s. The year starts with \"19...\" Look closely at the plaque!",
+      "Coach: Okay — the year is 1903. Add those digits: 1+9+0+3. And the sport? Think about what a pitcher does..."
+    ],
+    answer: ["13BASEBALL", "13baseball", "13 baseball", "13 Baseball"],
+    playerResponse: "13BASEBALL",
+    successMsg: "That's it! 1903, digits add to 13, and the sport is baseball. The first World Series, right under our feet.\n\nThere's something else written on the back of that note. It says:\n\n\"Head to where the bricks hold memories and one holds a question that changed someone's life forever. Walk toward the big open green space with the brick pathways — Centennial Common.\"\n\nThat's about a 3-minute walk toward Ryder Hall. Let me know when you arrive — type READY."
+  },
+  {
+    id: 2,
+    title: "Stop 2 — Written in Brick",
+    location: "Centennial Common, near Ryder Hall",
+    messages: [
+      { from: "narrator", text: "Centennial Common — the heart of campus. See all those bricks lining the pathways? Most of them are engraved with donor names. But one of them is different. Very different.\n\nSomewhere near Ryder Hall, there's a brick that doesn't have a name on it. Instead, it has a question. A romantic one. Find it." },
+      { from: "clue", text: "📜 CLUE FOUND (on a card tucked between the bricks):\n\nYou found the love brick! Someone literally carved their heart into this campus.\n\nNow here's your task. The kidnapper left a coded message. Each letter has been shifted forward by 3 positions in the alphabet (A→D, B→E, etc). Shift each letter BACKWARD by 3 to decode it:\n\nKHDG WR WKH WXQQHOV\n\nWhat does the decoded message say? Type it in exactly." },
+    ],
+    hints: [
+      "Coach: It's called a Caesar cipher. Go letter by letter and shift each one back by 3. So K→H, H→E, D→A, G→D...",
+      "Coach: The first word decodes to HEAD. Keep going — W→T, R→O... You've got this!"
+    ],
+    answer: ["HEAD TO THE TUNNELS", "head to the tunnels", "Head to the tunnels", "Head To The Tunnels"],
+    playerResponse: "HEAD TO THE TUNNELS",
+    successMsg: "\"HEAD TO THE TUNNELS\" — nice work cracking that cipher!\n\nThe tunnels... Northeastern has an underground tunnel system that connects 11 buildings across campus. The main entrance is near the Bookstore by Snell Library.\n\nBut wait — there's more writing on that card. The kidnapper added:\n\n\"Before you go underground, stop by the strange bronze figure lounging near Curry Student Center. She's got something for you.\"\n\nThat's just a 2-minute walk from here. Head toward Curry and look for the Reclining Figure sculpture. Type READY when you're there."
+  },
+  {
+    id: 3,
+    title: "Stop 3 — The Director's Chair",
+    location: "Reclining Figure Sculpture, Curry Student Center",
+    messages: [
+      { from: "narrator", text: "There she is — the bronze Reclining Figure. Most people walk right past her, but she's got a great origin story.\n\nThis sculpture was created by someone who was WAY more famous for making movies than making art. Specifically, a comedy franchise about a very clumsy French detective.\n\nThere's a sealed envelope tucked at the base of the sculpture." },
+      { from: "clue", text: "📜 CLUE FOUND:\n\nThe detective from those movies has a name you definitely know — even if you can't spell it.\n\nWho am I? \"I am the bumbling French detective from Blake Edwards' most famous film franchise. I chase jewel thieves and destroy everything in my path.\"\n\nWhat is my LAST NAME?\n\n(Just the last name, one word)" },
+    ],
+    hints: [
+      "Coach: Blake Edwards directed The Pink Panther movies. The main character is Inspector _______.",
+      "Coach: It's Inspector CLOUSEAU — played by Peter Sellers. Tricky to spell! C-L-O-U-S-E-A-U."
+    ],
+    answer: ["CLOUSEAU", "clouseau", "Clouseau"],
+    playerResponse: "CLOUSEAU",
+    successMsg: "Inspector Clouseau! Blake Edwards — the guy who directed The Pink Panther — made this sculpture. Who knew Hollywood directors moonlighted as bronze artists?\n\nInside the envelope there's another note from our kidnapper:\n\n\"Impressive. But can you find your way in the dark? Go underground. The primary tunnel entrance is near the Bookstore, next to Snell Library.\"\n\nHead to Snell Library — about 3 minutes from here. Type READY when you arrive."
+  },
+  {
+    id: 4,
+    title: "🍕 HALFTIME — Lunch Break + Sit-Down Puzzle",
+    location: "Snell Library area / grab food nearby",
+    messages: [
+      { from: "lunch", text: "⏸️ HALFTIME BREAK\n\nNice work — you're halfway through! The timer is paused. Grab lunch, take a breather, catch up with your team.\n\n🍕 Nearby food spots:\n• Curry Student Center food court (2 min walk)\n• Wollaston's Market in International Village\n• Tatte Bakery on Huntington Ave\n• Rebecca's Cafe in Ell Hall\n\nWhile you eat, work on the sit-down puzzle below. It's from the kidnapper — apparently they like logic games.\n\nType DONE when you've finished eating and solved the puzzle to restart the timer." },
+      { from: "clue", text: "📜 SIT-DOWN PUZZLE — The Tunnel Map\n\nNortheastern's tunnel system connects 11 buildings. The kidnapper left this logic puzzle:\n\nFive students — Ayla, Ben, Carmen, Dev, and Elena — each entered the tunnels from a different building. Figure out who entered from SNELL LIBRARY:\n\n1. Ayla entered from a building whose name starts with a vowel.\n2. Ben did NOT enter from Dodge Hall or Ell Hall.\n3. Carmen entered from the building that comes alphabetically just before Dev's building.\n4. Elena entered from Richards Hall.\n5. The five buildings are: Cabot Gym, Dodge Hall, Ell Hall, Richards Hall, Snell Library.\n\nWho entered from Snell Library? Type their name." },
+    ],
+    hints: [
+      "Coach: Start with the sure things. Elena = Richards Hall (given). Ayla needs a vowel-starting building — that's Ell Hall.",
+      "Coach: Carmen's building is alphabetically just before Dev's. That leaves Cabot Gym, Dodge Hall, and Snell Library for Ben/Carmen/Dev. Cabot comes before Dodge alphabetically... so Carmen = Cabot, Dev = Dodge. Who's left for Snell?"
+    ],
+    answer: ["BEN", "ben", "Ben"],
+    playerResponse: "BEN",
+    successMsg: "Ben! Nice one. Elena = Richards, Ayla = Ell Hall, Carmen = Cabot, Dev = Dodge, and Ben = Snell Library.\n\nOkay, break's over. The kidnapper's message continues:\n\n\"You figured out my tunnel puzzle, but you still don't know WHO I am. Head to ISEC — that big glass building — and look for the next clue near the main entrance.\"\n\nISEC (the Interdisciplinary Science and Engineering Complex) is about a 4-minute walk. Type READY when you're there."
+  },
+  {
+    id: 5,
+    title: "Stop 5 — The Glass Giant",
+    location: "ISEC (Interdisciplinary Science and Engineering Complex)",
+    messages: [
+      { from: "narrator", text: "ISEC — 220,000 square feet of glass and steel, and one of the coolest research buildings in the country. The kind of place where Northeastern's famous co-op students come back with real-world experience and put it to work.\n\nThere's something taped to the notice board near the main entrance." },
+      { from: "clue", text: "📜 CLUE FOUND:\n\nThe kidnapper is getting cocky. They left this message:\n\n\"You've been so busy chasing clues, you haven't stopped to think about who I am. Let me give you a hint about myself:\n\nI am NOT a current student.\nI was here when the oldest arena on campus still stood.\nMy favorite number is the amount of varsity sports Northeastern has.\nI always root AGAINST the Huskies.\"\n\nHere's your question: Northeastern's teams compete in NCAA Division I. How many varsity sports does the school have?\n\n(Just the number)" },
+    ],
+    hints: [
+      "Coach: Think about how many different sports you see at NEU. It's more than 15 but fewer than 20.",
+      "Coach: Northeastern has 18 varsity sports. That includes hockey, basketball, soccer, rowing, and more."
+    ],
+    answer: ["18", "eighteen"],
+    playerResponse: "18",
+    successMsg: "18 varsity sports — that's the kidnapper's favorite number. And they said they \"root AGAINST the Huskies\"... so they're a rival fan. And they knew Matthews Arena...\n\nKeep that in mind. We're building a profile.\n\nThe kidnapper's note continues:\n\"Your final destination is a place of endings and beginnings. Where the oldest arena once stood, now only ghosts and construction remain. Come say goodbye.\"\n\nHead toward the Matthews Arena construction site — where they're building the new athletics complex. It's about a 5-minute walk toward St. Botolph Street. Type READY when you arrive."
+  },
+  {
+    id: 6,
+    title: "Stop 6 — Ghosts of Matthews",
+    location: "Matthews Arena Construction Site (St. Botolph St side)",
+    messages: [
+      { from: "narrator", text: "Here it is. Or... here it was.\n\nMatthews Arena stood here for 115 years. The oldest multi-purpose arena in the world. The Bruins played their first home game here. The Celtics too. Generations of Huskies grew up in those stands.\n\nNow it's rubble and excavators. They're building something incredible in its place — a 310,000 square foot athletics complex opening in 2028. But today, it's a construction site and a whole lot of memories.\n\nLook around the fencing. The kidnapper left one final message." },
+      { from: "clue", text: "📜 FINAL CLUE:\n\n\"Congratulations. You've proven yourself a true Husky. But to get Paws back, you need to tell me WHO I AM.\n\nHere's everything you know about me:\n• I root against the Huskies\n• I was here when Matthews Arena still stood\n• My favorite number is 18\n• I left my first clue at the site of a game between the Boston Americans and the Pittsburgh Pirates\n\nThe Americans beat the Pirates in 1903. What team do the Pirates represent TODAY? That's my school.\n\nWhat university am I from? Type just the CITY.\"\n\n(Hint: think about where the Pittsburgh Pirates are from... and which university's fans are Northeastern's biggest hockey rivals from that state.)" },
+    ],
+    hints: [
+      "Coach: The Pittsburgh Pirates are from... Pittsburgh. But think about college rivalries. Which university from the state of Pennsylvania is a big hockey rival?",
+      "Coach: Okay this is a bit of a trick — the Pittsburgh Pirates' city is the answer. The kidnapper is from PITTSBURGH. But actually, re-read: they said \"What university am I from? Type just the CITY.\" The answer is simply PITTSBURGH."
+    ],
+    answer: ["PITTSBURGH", "pittsburgh", "Pittsburgh"],
+    playerResponse: "PITTSBURGH",
+    successMsg: null
+  }
+];
+
+const FINALE = [
+  { from: "narrator", text: "PITTSBURGH! Of course! A rival fan from out of town, jealous of the Huskies!\n\nI just got a call from campus police — they found Paws! He was in a crate behind the Cabot Center dumpsters, right back where this all started. He's safe, a little grumpy, and very hungry." },
+  { from: "system", text: "🐾🎉 MISSION COMPLETE — PAWS HAS BEEN RESCUED! 🎉🐾" },
+  { from: "narrator", text: "You did it! You walked across campus, cracked ciphers, solved logic puzzles, and outsmarted a very petty rival fan.\n\nYou're a true Northeastern Husky. Paws is safe, and Saturday's game is ON.\n\n🐾 Thanks for playing The Husky Heist!\nA Riddle Quest by RiddleQuest.com" },
+];
+
+// ---- APP STATE ----
+let state = {
+  currentStop: 0,
+  msgQueue: [],
+  displayedMsgs: [],
+  hintsUsed: 0,
+  waitingForReady: false,
+  waitingForAnswer: false,
+  puzzleSolved: false,
+  timerRunning: false,
+  timerPaused: false,
+  startTime: null,
+  elapsed: 0,
+  pauseStart: null,
+  totalPaused: 0,
+  finished: false,
+};
+
+function $(sel) { return document.querySelector(sel); }
+
+function formatTime(ms) {
+  let s = Math.floor(ms / 1000);
+  let m = Math.floor(s / 60);
+  s = s % 60;
+  let h = Math.floor(m / 60);
+  m = m % 60;
+  return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+}
+
+function render() {
+  const app = $('#app');
+  const stop = STOPS[state.currentStop];
+  
+  let html = `
+    <div class="header">
+      <div class="paw">🐾</div>
+      <h1>The Husky Heist</h1>
+      <div class="sub">A Northeastern Riddle Quest</div>
+      <div class="badges">
+        <span class="badge">⏱ ~1 hour</span>
+        <span class="badge">🚶 ~1 mile loop</span>
+        <span class="badge">📍 NEU Boston Campus</span>
+      </div>
+    </div>
+    
+    <div class="progress-dots">
+      ${STOPS.map((s, i) => `<div class="dot ${i < state.currentStop ? 'done' : i === state.currentStop ? 'active' : ''}"></div>`).join('')}
+    </div>
+  `;
+  
+  // Timer
+  if (state.timerRunning || state.finished) {
+    let elapsed = state.elapsed;
+    if (state.timerRunning && !state.timerPaused) {
+      elapsed = Date.now() - state.startTime - state.totalPaused;
+    }
+    html += `
+      <div class="timer-bar">
+        <div>
+          <div class="label">${state.finished ? 'Final Time' : state.timerPaused ? 'Paused' : 'Elapsed'}</div>
+          <div class="time" id="timerDisplay">${formatTime(elapsed)}</div>
+        </div>
+        ${!state.finished ? `<button class="timer-btn ${state.timerPaused ? 'paused' : ''}" onclick="togglePause()">${state.timerPaused ? '▶ Resume' : '⏸ Pause'}</button>` : ''}
+      </div>
+    `;
+  }
+  
+  // Stop title
+  if (state.currentStop > 0 && stop) {
+    html += `<div style="text-align:center;margin-bottom:16px;">
+      <div style="font-size:13px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1px;">${stop.title}</div>
+      <div style="font-size:12px;color:var(--text-dim);margin-top:2px;">📍 ${stop.location}</div>
+    </div>`;
+  }
+  
+  // Messages
+  html += `<div id="messages">`;
+  for (const msg of state.displayedMsgs) {
+    if (msg.from === 'narrator') {
+      html += `<div class="msg-container"><div class="msg narrator"><div class="sender">🔍 Coach</div>${escHtml(msg.text)}</div></div>`;
+    } else if (msg.from === 'clue') {
+      html += `<div class="msg-container"><div class="msg killer"><div class="sender">📜 Clue</div>${escHtml(msg.text)}</div></div>`;
+    } else if (msg.from === 'player') {
+      html += `<div class="msg-container"><div class="msg player">${escHtml(msg.text)}</div></div>`;
+    } else if (msg.from === 'system') {
+      html += `<div class="msg-container"><div class="msg system">${escHtml(msg.text)}</div></div>`;
+    } else if (msg.from === 'lunch') {
+      html += `<div class="msg-container"><div class="msg lunch"><div class="sender">🍕 Halftime</div>${escHtml(msg.text)}</div></div>`;
+    } else if (msg.from === 'hint') {
+      html += `<div class="msg-container"><div class="msg narrator" style="border-color:#3a3a1a;"><div class="sender" style="color:var(--gold);">💡 Hint</div>${escHtml(msg.text)}</div></div>`;
+    } else if (msg.from === 'wrong') {
+      html += `<div class="msg-container"><div class="msg narrator" style="border-color:#4a2020;"><div class="sender" style="color:#e55;">❌ Coach</div>${escHtml(msg.text)}</div></div>`;
+    }
+  }
+  html += `</div>`;
+  
+  // Hint buttons
+  if (state.waitingForAnswer && stop && !state.finished) {
+    const maxHints = stop.hints ? stop.hints.length : 0;
+    html += `<div class="hint-row">`;
+    for (let i = 0; i < maxHints; i++) {
+      const used = state.hintsUsed > i;
+      html += `<button class="hint-btn" ${used || state.hintsUsed < i ? 'disabled' : ''} onclick="useHint(${i})">${used ? '💡 Hint ' + (i+1) + ' ✓' : '💡 Hint ' + (i+1)}</button>`;
+    }
+    html += `<button class="hint-btn" onclick="showAnswer()" style="margin-left:auto;border-color:#4a2020;color:#e55;">🏳️ Show Answer</button>`;
+    html += `</div>`;
+  }
+  
+  // Input
+  if (!state.finished) {
+    let placeholder = "Type your answer...";
+    if (state.waitingForReady) placeholder = "Type READY to continue...";
+    if (state.currentStop === 0 && state.displayedMsgs.length <= 1) placeholder = "Type START when you're at the statue...";
+    if (stop && stop.id === 4 && state.waitingForReady) placeholder = "Type DONE when you've eaten & solved it...";
+    
+    html += `
+      <div class="input-area">
+        <input type="text" id="userInput" placeholder="${placeholder}" onkeydown="if(event.key==='Enter')submitAnswer()" autocomplete="off" autocapitalize="off" />
+        <button class="send-btn" onclick="submitAnswer()">➤</button>
+      </div>
+    `;
+  }
+  
+  html += `<div class="scroll-anchor" id="scrollAnchor"></div>`;
+  
+  app.innerHTML = html;
+  
+  // Auto-scroll
+  setTimeout(() => {
+    const anchor = document.getElementById('scrollAnchor');
+    if (anchor) anchor.scrollIntoView({ behavior: 'smooth' });
+    const input = document.getElementById('userInput');
+    if (input) input.focus();
+  }, 50);
+}
+
+function escHtml(text) {
+  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+function startStop(idx) {
+  state.currentStop = idx;
+  state.hintsUsed = 0;
+  state.puzzleSolved = false;
+  state.waitingForReady = false;
+  state.waitingForAnswer = false;
+  
+  const stop = STOPS[idx];
+  if (!stop) return;
+  
+  // Queue messages with delays
+  state.msgQueue = [...stop.messages];
+  showNextQueued();
+}
+
+function showNextQueued() {
+  if (state.msgQueue.length === 0) {
+    // All messages shown, now wait for input
+    const stop = STOPS[state.currentStop];
+    if (stop.type === "intro") {
+      state.waitingForReady = false;
+      state.waitingForAnswer = true;
+    } else {
+      state.waitingForAnswer = true;
+    }
+    render();
+    return;
+  }
+  
+  const msg = state.msgQueue.shift();
+  state.displayedMsgs.push(msg);
+  render();
+  
+  if (state.msgQueue.length > 0) {
+    setTimeout(showNextQueued, 600);
+  } else {
+    showNextQueued();
+  }
+}
+
+function submitAnswer() {
+  const input = document.getElementById('userInput');
+  if (!input) return;
+  const val = input.value.trim();
+  if (!val) return;
+  
+  const stop = STOPS[state.currentStop];
+  
+  // Intro stop
+  if (stop.type === "intro") {
+    if (stop.accept.includes(val)) {
+      state.displayedMsgs.push({ from: 'player', text: stop.playerResponse });
+      state.waitingForAnswer = false;
+      // Start timer
+      state.timerRunning = true;
+      state.startTime = Date.now();
+      state.totalPaused = 0;
+      // Move to stop 1 after brief delay
+      render();
+      setTimeout(() => {
+        state.displayedMsgs = [];
+        startStop(1);
+      }, 800);
+    } else {
+      state.displayedMsgs.push({ from: 'player', text: val });
+      state.displayedMsgs.push({ from: 'narrator', text: "Head to the Cy Young Statue outside Cabot Center and type START when you're ready!" });
+      render();
+    }
+    return;
+  }
+  
+  // Check for READY responses between stops
+  if (state.waitingForReady) {
+    const readyWords = ["READY", "ready", "Ready", "DONE", "done", "Done"];
+    if (readyWords.includes(val)) {
+      state.displayedMsgs.push({ from: 'player', text: val });
+      state.waitingForReady = false;
+      
+      // If it's the lunch stop DONE, unpause timer
+      if (stop.id === 4 && state.timerPaused) {
+        state.totalPaused += Date.now() - state.pauseStart;
+        state.timerPaused = false;
+        state.pauseStart = null;
+      }
+      
+      render();
+      setTimeout(() => {
+        state.displayedMsgs = [];
+        startStop(state.currentStop + 1);
+      }, 600);
+    } else {
+      state.displayedMsgs.push({ from: 'player', text: val });
+      state.displayedMsgs.push({ from: 'narrator', text: "Type READY when you've arrived at the next location! (Or DONE if you're at the lunch break.)" });
+      render();
+    }
+    return;
+  }
+  
+  // Check answer
+  if (state.waitingForAnswer) {
+    state.displayedMsgs.push({ from: 'player', text: val });
+    
+    if (stop.answer.includes(val) || stop.answer.map(a => a.toUpperCase()).includes(val.toUpperCase())) {
+      state.puzzleSolved = true;
+      state.waitingForAnswer = false;
+      
+      // Last stop?
+      if (state.currentStop === STOPS.length - 1) {
+        // Finale!
+        state.elapsed = Date.now() - state.startTime - state.totalPaused;
+        state.timerRunning = false;
+        state.finished = true;
+        for (const msg of FINALE) {
+          state.displayedMsgs.push(msg);
+        }
+        state.displayedMsgs.push({ from: 'system', text: `⏱ Your time: ${formatTime(state.elapsed)}` });
+        render();
+        return;
+      }
+      
+      // Success message
+      state.displayedMsgs.push({ from: 'system', text: "✅ Correct!" });
+      state.displayedMsgs.push({ from: 'narrator', text: stop.successMsg });
+      state.waitingForReady = true;
+      
+      // Auto-pause for lunch stop
+      if (STOPS[state.currentStop + 1] && STOPS[state.currentStop + 1].id === 4) {
+        // The next stop is the lunch break — it will auto-pause when it loads
+      }
+      if (stop.id === 3) {
+        // After stop 3 success, the next stop (4) is lunch — pause timer when they get there
+      }
+      
+      render();
+    } else {
+      state.displayedMsgs.push({ from: 'wrong', text: "Hmm, that's not quite right. Try again! Use a hint if you're stuck — no penalties, this is just for fun." });
+      render();
+    }
+    return;
+  }
+}
+
+function useHint(idx) {
+  const stop = STOPS[state.currentStop];
+  if (!stop || !stop.hints || idx >= stop.hints.length) return;
+  state.hintsUsed = idx + 1;
+  state.displayedMsgs.push({ from: 'hint', text: stop.hints[idx] });
+  render();
+}
+
+function showAnswer() {
+  const stop = STOPS[state.currentStop];
+  if (!stop) return;
+  const ans = stop.answer[0];
+  state.displayedMsgs.push({ from: 'hint', text: `The answer is: ${ans}\n\nType it in to continue!` });
+  state.hintsUsed = stop.hints ? stop.hints.length : 0;
+  render();
+}
+
+function togglePause() {
+  if (state.timerPaused) {
+    state.totalPaused += Date.now() - state.pauseStart;
+    state.timerPaused = false;
+    state.pauseStart = null;
+  } else {
+    state.timerPaused = true;
+    state.pauseStart = Date.now();
+  }
+  render();
+}
+
+// Timer update
+setInterval(() => {
+  if (state.timerRunning && !state.timerPaused) {
+    const el = document.getElementById('timerDisplay');
+    if (el) {
+      const elapsed = Date.now() - state.startTime - state.totalPaused;
+      el.textContent = formatTime(elapsed);
+    }
+  }
+}, 1000);
+
+// Auto-pause on lunch stop
+const origStartStop = startStop;
+startStop = function(idx) {
+  origStartStop(idx);
+  if (STOPS[idx] && STOPS[idx].id === 4 && !state.timerPaused) {
+    state.timerPaused = true;
+    state.pauseStart = Date.now();
+    render();
+  }
+};
+
+// Init
+startStop(0);
+</script>
 </body>
 </html>
