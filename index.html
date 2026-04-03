@@ -3,239 +3,218 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Husky Heist — A Northeastern Riddle Quest</title>
+<title>The Husky Heist</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-  
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  
-  :root {
-    --red: #c41230;
-    --red-dark: #a00e28;
-    --red-light: #fef2f2;
-    --gold: #d4a843;
-    --bg: #0f0f0f;
-    --card: #1a1a1a;
-    --card-border: #2a2a2a;
-    --text: #e8e8e8;
-    --text-dim: #888;
-    --success: #22c55e;
-    --success-bg: #0a2a14;
-  }
-  
-  body {
-    font-family: 'Inter', system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
-    min-height: 100vh;
-  }
-  
-  .container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 16px;
-  }
-  
-  /* Header */
-  .header {
-    text-align: center;
-    padding: 40px 20px 30px;
-    position: relative;
-  }
-  .header .paw { font-size: 56px; margin-bottom: 12px; }
-  .header h1 { font-size: 32px; font-weight: 900; color: var(--red); letter-spacing: -0.5px; }
-  .header .sub { font-size: 14px; color: var(--text-dim); margin-top: 4px; }
-  .header .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
-  .badge {
-    font-size: 12px; background: var(--card); border: 1px solid var(--card-border);
-    padding: 5px 12px; border-radius: 20px; color: var(--text-dim);
-  }
-  
-  /* Timer bar */
-  .timer-bar {
-    display: flex; align-items: center; justify-content: center; gap: 12px;
-    background: var(--card); border: 1px solid var(--card-border); border-radius: 12px;
-    padding: 12px 16px; margin-bottom: 24px; text-align: center;
-  }
-  .timer-bar .time { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--gold); }
-  .timer-bar .label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
-  .timer-btn {
-    background: var(--card-border); border: none; color: var(--text); padding: 6px 14px;
-    border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600;
-  }
-  .timer-btn:hover { background: #333; }
-  .timer-btn.paused { background: var(--red); color: white; }
-  
-  /* Message bubbles */
-  .msg-container { margin-bottom: 12px; }
-  
-  .msg {
-    padding: 14px 16px; border-radius: 16px; font-size: 14px; line-height: 1.7;
-    max-width: 92%; white-space: pre-line; animation: fadeIn 0.3s ease;
-  }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  
-  .msg.narrator {
-    background: var(--card); border: 1px solid var(--card-border);
-    margin-right: auto; border-bottom-left-radius: 4px;
-  }
-  .msg.narrator .sender { font-size: 11px; font-weight: 700; color: var(--red); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
-  
-  .msg.killer {
-    background: #1a1520; border: 1px solid #2a2030;
-    margin-right: auto; border-bottom-left-radius: 4px;
-    font-family: 'Courier New', monospace; color: #c8a0e8;
-  }
-  .msg.killer .sender { font-size: 11px; font-weight: 700; color: #9b59b6; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
-  
-  .msg.player {
-    background: var(--red); color: white;
-    margin-left: auto; border-bottom-right-radius: 4px;
-  }
-  
-  .msg.system {
-    background: var(--success-bg); border: 1px solid #1a4a2a;
-    text-align: center; max-width: 100%; font-weight: 600; color: var(--success);
-  }
-  
-  .msg.lunch {
-    background: #1a1a0a; border: 1px solid #3a3a1a;
-    text-align: center; max-width: 100%;
-  }
-  .msg.lunch .sender { font-size: 11px; font-weight: 700; color: var(--gold); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
-  
-  /* Input area */
-  .input-area {
-    display: flex; gap: 8px; margin: 16px 0;
-    position: sticky; bottom: 16px;
-    background: var(--bg); padding: 8px 0;
-  }
-  .input-area input {
-    flex: 1; padding: 12px 16px; border-radius: 24px;
-    background: var(--card); border: 1px solid var(--card-border);
-    color: var(--text); font-size: 14px; font-family: inherit; outline: none;
-  }
-  .input-area input:focus { border-color: var(--red); }
-  .input-area input::placeholder { color: #555; }
-  
-  .send-btn {
-    width: 44px; height: 44px; border-radius: 50%; border: none;
-    background: var(--red); color: white; cursor: pointer; font-size: 18px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .send-btn:hover { background: var(--red-dark); }
-  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  
-  /* Hint buttons */
-  .hint-row { display: flex; gap: 8px; margin: 8px 0 16px; }
-  .hint-btn {
-    padding: 8px 16px; border-radius: 20px; border: 1px solid var(--card-border);
-    background: var(--card); color: var(--text-dim); cursor: pointer;
-    font-size: 12px; font-weight: 600; font-family: inherit; transition: all 0.2s;
-  }
-  .hint-btn:hover { border-color: var(--gold); color: var(--gold); }
-  .hint-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-  
-  .progress-dots {
-    display: flex; gap: 6px; justify-content: center; margin: 20px 0;
-  }
-  .dot {
-    width: 10px; height: 10px; border-radius: 50%; background: var(--card-border);
-    transition: all 0.3s;
-  }
-  .dot.active { background: var(--red); transform: scale(1.2); }
-  .dot.done { background: var(--success); }
-  
-  .scroll-anchor { height: 1px; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --red: #c41230;
+  --red-dark: #a00e28;
+  --red-light: #fef2f2;
+  --gold: #d4a843;
+  --bg: #0f0f0f;
+  --card: #1a1a1a;
+  --card-border: #2a2a2a;
+  --text: #e8e8e8;
+  --text-dim: #888;
+  --success: #22c55e;
+  --success-bg: #0a2a14;
+}
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+}
+.header {
+  text-align: center;
+  padding: 40px 20px 30px;
+  position: relative;
+}
+.header .paw { font-size: 56px; margin-bottom: 12px; }
+.header h1 { font-size: 32px; font-weight: 900; color: var(--red); letter-spacing: -0.5px; }
+.header .sub { font-size: 14px; color: var(--text-dim); margin-top: 4px; }
+.header .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+.badge {
+  font-size: 12px; background: var(--card); border: 1px solid var(--card-border);
+  padding: 5px 12px; border-radius: 20px; color: var(--text-dim);
+}
+.timer-bar {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  background: var(--card); border: 1px solid var(--card-border); border-radius: 12px;
+  padding: 12px 16px; margin-bottom: 24px; text-align: center;
+}
+.timer-bar .time { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--gold); }
+.timer-bar .label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+.timer-btn {
+  background: var(--card-border); border: none; color: var(--text); padding: 6px 14px;
+  border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600;
+}
+.timer-btn:hover { background: #333; }
+.timer-btn.paused { background: var(--red); color: white; }
+.msg-container { margin-bottom: 12px; }
+.msg {
+  padding: 14px 16px; border-radius: 16px; font-size: 14px; line-height: 1.7;
+  max-width: 92%; white-space: pre-line; animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.msg.narrator {
+  background: var(--card); border: 1px solid var(--card-border);
+  margin-right: auto; border-bottom-left-radius: 4px;
+}
+.msg.narrator .sender { font-size: 11px; font-weight: 700; color: var(--red); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+.msg.killer {
+  background: #1a1520; border: 1px solid #2a2030;
+  margin-right: auto; border-bottom-left-radius: 4px;
+  font-family: 'Courier New', monospace; color: #c8a0e8;
+}
+.msg.killer .sender { font-size: 11px; font-weight: 700; color: #9b59b6; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+.msg.player {
+  background: var(--red); color: white;
+  margin-left: auto; border-bottom-right-radius: 4px;
+}
+.msg.system {
+  background: var(--success-bg); border: 1px solid #1a4a2a;
+  text-align: center; max-width: 100%; font-weight: 600; color: var(--success);
+}
+.msg.lunch {
+  background: #1a1a0a; border: 1px solid #3a3a1a;
+  text-align: center; max-width: 100%;
+}
+.msg.lunch .sender { font-size: 11px; font-weight: 700; color: var(--gold); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+.input-area {
+  display: flex; gap: 8px; margin: 16px 0;
+  position: sticky; bottom: 16px;
+  background: var(--bg); padding: 8px 0;
+}
+.input-area input {
+  flex: 1; padding: 12px 16px; border-radius: 24px;
+  background: var(--card); border: 1px solid var(--card-border);
+  color: var(--text); font-size: 14px; font-family: inherit; outline: none;
+}
+.input-area input:focus { border-color: var(--red); }
+.input-area input::placeholder { color: #555; }
+.send-btn {
+  width: 44px; height: 44px; border-radius: 50%; border: none;
+  background: var(--red); color: white; cursor: pointer; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.send-btn:hover { background: var(--red-dark); }
+.send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.hint-row { display: flex; gap: 8px; margin: 8px 0 16px; flex-wrap: wrap; }
+.hint-btn {
+  padding: 8px 16px; border-radius: 20px; border: 1px solid var(--card-border);
+  background: var(--card); color: var(--text-dim); cursor: pointer;
+  font-size: 12px; font-weight: 600; font-family: inherit; transition: all 0.2s;
+}
+.hint-btn:hover { border-color: var(--gold); color: var(--gold); }
+.hint-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.progress-dots {
+  display: flex; gap: 6px; justify-content: center; margin: 20px 0;
+}
+.dot {
+  width: 10px; height: 10px; border-radius: 50%; background: var(--card-border);
+  transition: all 0.3s;
+}
+.dot.active { background: var(--red); transform: scale(1.2); }
+.dot.done { background: var(--success); }
+.scroll-anchor { height: 1px; }
+.stop-header { text-align: center; margin-bottom: 16px; }
+.stop-title { font-size: 13px; font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: 1px; }
+.stop-loc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
 </style>
 </head>
 <body>
 <div class="container" id="app"></div>
-
 <script>
-const STOPS = [
+var STOPS = [
   {
     id: 0,
     type: "intro",
     messages: [
-      { from: "narrator", text: "🐾 Hey there, Husky! It's Coach. I need your help — this is urgent.\n\nPaws has gone missing. Our beloved mascot was last seen near Cabot Center before yesterday's pep rally, and now there's no sign of him anywhere. Campus police found a torn note near his kennel that said:\n\n\"Want him back? Prove you're a real Northeastern Husky. Follow my trail.\"\n\nSomeone's playing games with us. I need you to follow the clues this creep left behind, figure out where they're hiding Paws, and bring him home before Saturday's game.\n\nI'll be your guide over text. Head to the Cy Young Statue outside Cabot Center to start — you know, the bronze pitcher on the old World Series grounds. When you're there, type START." },
+      { from: "narrator", text: "\u{1F43E} Hey there, Husky! It's Coach. I need your help \u2014 this is urgent.\n\nPaws has gone missing. Our beloved mascot was last seen near Cabot Center before yesterday's pep rally, and now there's no sign of him anywhere. Campus police found a torn note near his kennel that said:\n\n\"Want him back? Prove you're a real Northeastern Husky. Follow my trail.\"\n\nSomeone's playing games with us. I need you to follow the clues this creep left behind, figure out where they're hiding Paws, and bring him home before Saturday's game.\n\nI'll be your guide over text. Head to the Cy Young Statue outside Cabot Center to start \u2014 you know, the bronze pitcher on the old World Series grounds. When you're there, type START." }
     ],
     accept: ["START", "start", "Start"],
-    playerResponse: "I'm at the statue. Let's find Paws.",
+    playerResponse: "I'm at the statue. Let's find Paws."
   },
   {
     id: 1,
-    title: "Stop 1 — The Pitcher's Mound",
+    title: "Stop 1 \u2014 The Pitcher's Mound",
     location: "Cy Young Statue, outside Cabot Center",
     messages: [
-      { from: "narrator", text: "Good, you're here. The Cy Young statue — standing on the exact spot where the first-ever World Series was played. Pretty legendary ground.\n\nLook around the statue and its plaque. There should be something taped to the back of the base. See it? It's the first clue from our mystery kidnapper." },
-      { from: "clue", text: "📜 CLUE FOUND:\n\nYou're standing where history hit a home run. The year it all started is etched in stone right in front of you.\n\nTake that year. Add up all four of its digits. That number is your first key.\n\nNow look: what sport made this ground famous?\n\nYour answer: the digit sum, followed by the sport.\nExample format: 15HOCKEY" },
+      { from: "narrator", text: "Good, you're here. The Cy Young statue \u2014 standing on the exact spot where the first-ever World Series was played. Pretty legendary ground.\n\nLook around the statue and its plaque. There should be something taped to the back of the base. See it? It's the first clue from our mystery kidnapper." },
+      { from: "clue", text: "\u{1F4DC} CLUE FOUND:\n\nYou're standing where history hit a home run. The year it all started is etched in stone right in front of you.\n\nTake that year. Add up all four of its digits. That number is your first key.\n\nNow look: what sport made this ground famous?\n\nYour answer: the digit sum, followed by the sport.\nExample format: 15HOCKEY" }
     ],
     hints: [
       "Coach: The first World Series happened in the early 1900s. The year starts with \"19...\" Look closely at the plaque!",
-      "Coach: Okay — the year is 1903. Add those digits: 1+9+0+3. And the sport? Think about what a pitcher does..."
+      "Coach: Okay \u2014 the year is 1903. Add those digits: 1+9+0+3. And the sport? Think about what a pitcher does..."
     ],
-    answer: ["13BASEBALL", "13baseball", "13 baseball", "13 Baseball"],
+    answer: ["13BASEBALL", "13baseball", "13 baseball", "13 Baseball", "13Baseball"],
     playerResponse: "13BASEBALL",
-    successMsg: "That's it! 1903, digits add to 13, and the sport is baseball. The first World Series, right under our feet.\n\nThere's something else written on the back of that note. It says:\n\n\"Head to where the bricks hold memories and one holds a question that changed someone's life forever. Walk toward the big open green space with the brick pathways — Centennial Common.\"\n\nThat's about a 3-minute walk toward Ryder Hall. Let me know when you arrive — type READY."
+    successMsg: "That's it! 1903, digits add to 13, and the sport is baseball. The first World Series, right under our feet.\n\nThere's something else written on the back of that note. It says:\n\n\"Head to where the bricks hold memories and one holds a question that changed someone's life forever. Walk toward the big open green space with the brick pathways \u2014 Centennial Common.\"\n\nThat's about a 3-minute walk toward Ryder Hall. Let me know when you arrive \u2014 type READY."
   },
   {
     id: 2,
-    title: "Stop 2 — Written in Brick",
+    title: "Stop 2 \u2014 Written in Brick",
     location: "Centennial Common, near Ryder Hall",
     messages: [
-      { from: "narrator", text: "Centennial Common — the heart of campus. See all those bricks lining the pathways? Most of them are engraved with donor names. But one of them is different. Very different.\n\nSomewhere near Ryder Hall, there's a brick that doesn't have a name on it. Instead, it has a question. A romantic one. Find it." },
-      { from: "clue", text: "📜 CLUE FOUND (on a card tucked between the bricks):\n\nYou found the love brick! Someone literally carved their heart into this campus.\n\nNow here's your task. The kidnapper left a coded message. Each letter has been shifted forward by 3 positions in the alphabet (A→D, B→E, etc). Shift each letter BACKWARD by 3 to decode it:\n\nKHDG WR WKH WXQQHOV\n\nWhat does the decoded message say? Type it in exactly." },
+      { from: "narrator", text: "Centennial Common \u2014 the heart of campus. See all those bricks lining the pathways? Most of them are engraved with donor names. But one of them is different. Very different.\n\nSomewhere near Ryder Hall, there's a brick that doesn't have a name on it. Instead, it has a question. A romantic one. Find it." },
+      { from: "clue", text: "\u{1F4DC} CLUE FOUND (on a card tucked between the bricks):\n\nYou found the love brick! Someone literally carved their heart into this campus.\n\nNow here's your task. The kidnapper left a coded message. Each letter has been shifted forward by 3 positions in the alphabet (A\u2192D, B\u2192E, etc). Shift each letter BACKWARD by 3 to decode it:\n\nKHDG WR WKH WXQQHOV\n\nWhat does the decoded message say? Type it in exactly." }
     ],
     hints: [
-      "Coach: It's called a Caesar cipher. Go letter by letter and shift each one back by 3. So K→H, H→E, D→A, G→D...",
-      "Coach: The first word decodes to HEAD. Keep going — W→T, R→O... You've got this!"
+      "Coach: It's called a Caesar cipher. Go letter by letter and shift each one back by 3. So K\u2192H, H\u2192E, D\u2192A, G\u2192D...",
+      "Coach: The first word decodes to HEAD. Keep going \u2014 W\u2192T, R\u2192O... You've got this!"
     ],
     answer: ["HEAD TO THE TUNNELS", "head to the tunnels", "Head to the tunnels", "Head To The Tunnels"],
     playerResponse: "HEAD TO THE TUNNELS",
-    successMsg: "\"HEAD TO THE TUNNELS\" — nice work cracking that cipher!\n\nThe tunnels... Northeastern has an underground tunnel system that connects 11 buildings across campus. The main entrance is near the Bookstore by Snell Library.\n\nBut wait — there's more writing on that card. The kidnapper added:\n\n\"Before you go underground, stop by the strange bronze figure lounging near Curry Student Center. She's got something for you.\"\n\nThat's just a 2-minute walk from here. Head toward Curry and look for the Reclining Figure sculpture. Type READY when you're there."
+    successMsg: "\"HEAD TO THE TUNNELS\" \u2014 nice work cracking that cipher!\n\nThe tunnels... Northeastern has an underground tunnel system that connects 11 buildings across campus. The main entrance is near the Bookstore by Snell Library.\n\nBut wait \u2014 there's more writing on that card. The kidnapper added:\n\n\"Before you go underground, stop by the strange bronze figure lounging near Curry Student Center. She's got something for you.\"\n\nThat's just a 2-minute walk from here. Head toward Curry and look for the Reclining Figure sculpture. Type READY when you're there."
   },
   {
     id: 3,
-    title: "Stop 3 — The Director's Chair",
+    title: "Stop 3 \u2014 The Director's Chair",
     location: "Reclining Figure Sculpture, Curry Student Center",
     messages: [
-      { from: "narrator", text: "There she is — the bronze Reclining Figure. Most people walk right past her, but she's got a great origin story.\n\nThis sculpture was created by someone who was WAY more famous for making movies than making art. Specifically, a comedy franchise about a very clumsy French detective.\n\nThere's a sealed envelope tucked at the base of the sculpture." },
-      { from: "clue", text: "📜 CLUE FOUND:\n\nThe detective from those movies has a name you definitely know — even if you can't spell it.\n\nWho am I? \"I am the bumbling French detective from Blake Edwards' most famous film franchise. I chase jewel thieves and destroy everything in my path.\"\n\nWhat is my LAST NAME?\n\n(Just the last name, one word)" },
+      { from: "narrator", text: "There she is \u2014 the bronze Reclining Figure. Most people walk right past her, but she's got a great origin story.\n\nThis sculpture was created by someone who was WAY more famous for making movies than making art. Specifically, a comedy franchise about a very clumsy French detective.\n\nThere's a sealed envelope tucked at the base of the sculpture." },
+      { from: "clue", text: "\u{1F4DC} CLUE FOUND:\n\nThe detective from those movies has a name you definitely know \u2014 even if you can't spell it.\n\nWho am I? \"I am the bumbling French detective from Blake Edwards' most famous film franchise. I chase jewel thieves and destroy everything in my path.\"\n\nWhat is my LAST NAME?\n\n(Just the last name, one word)" }
     ],
     hints: [
       "Coach: Blake Edwards directed The Pink Panther movies. The main character is Inspector _______.",
-      "Coach: It's Inspector CLOUSEAU — played by Peter Sellers. Tricky to spell! C-L-O-U-S-E-A-U."
+      "Coach: It's Inspector CLOUSEAU \u2014 played by Peter Sellers. Tricky to spell! C-L-O-U-S-E-A-U."
     ],
     answer: ["CLOUSEAU", "clouseau", "Clouseau"],
     playerResponse: "CLOUSEAU",
-    successMsg: "Inspector Clouseau! Blake Edwards — the guy who directed The Pink Panther — made this sculpture. Who knew Hollywood directors moonlighted as bronze artists?\n\nInside the envelope there's another note from our kidnapper:\n\n\"Impressive. But can you find your way in the dark? Go underground. The primary tunnel entrance is near the Bookstore, next to Snell Library.\"\n\nHead to Snell Library — about 3 minutes from here. Type READY when you arrive."
+    successMsg: "Inspector Clouseau! Blake Edwards \u2014 the guy who directed The Pink Panther \u2014 made this sculpture. Who knew Hollywood directors moonlighted as bronze artists?\n\nInside the envelope there's another note from our kidnapper:\n\n\"Impressive. But can you find your way in the dark? Go underground. The primary tunnel entrance is near the Bookstore, next to Snell Library.\"\n\nHead to Snell Library \u2014 about 3 minutes from here. Type READY when you arrive."
   },
   {
     id: 4,
-    title: "🍕 HALFTIME — Lunch Break + Sit-Down Puzzle",
+    title: "\u{1F355} HALFTIME \u2014 Lunch Break + Sit-Down Puzzle",
     location: "Snell Library area / grab food nearby",
     messages: [
-      { from: "lunch", text: "⏸️ HALFTIME BREAK\n\nNice work — you're halfway through! The timer is paused. Grab lunch, take a breather, catch up with your team.\n\n🍕 Nearby food spots:\n• Curry Student Center food court (2 min walk)\n• Wollaston's Market in International Village\n• Tatte Bakery on Huntington Ave\n• Rebecca's Cafe in Ell Hall\n\nWhile you eat, work on the sit-down puzzle below. It's from the kidnapper — apparently they like logic games.\n\nType DONE when you've finished eating and solved the puzzle to restart the timer." },
-      { from: "clue", text: "📜 SIT-DOWN PUZZLE — The Tunnel Map\n\nNortheastern's tunnel system connects 11 buildings. The kidnapper left this logic puzzle:\n\nFive students — Ayla, Ben, Carmen, Dev, and Elena — each entered the tunnels from a different building. Figure out who entered from SNELL LIBRARY:\n\n1. Ayla entered from a building whose name starts with a vowel.\n2. Ben did NOT enter from Dodge Hall or Ell Hall.\n3. Carmen entered from the building that comes alphabetically just before Dev's building.\n4. Elena entered from Richards Hall.\n5. The five buildings are: Cabot Gym, Dodge Hall, Ell Hall, Richards Hall, Snell Library.\n\nWho entered from Snell Library? Type their name." },
+      { from: "lunch", text: "\u23F8\uFE0F HALFTIME BREAK\n\nNice work \u2014 you're halfway through! The timer is paused. Grab lunch, take a breather, catch up with your team.\n\n\u{1F355} Nearby food spots:\n\u2022 Curry Student Center food court (2 min walk)\n\u2022 Wollaston's Market in International Village\n\u2022 Tatte Bakery on Huntington Ave\n\u2022 Rebecca's Cafe in Ell Hall\n\nWhile you eat, work on the sit-down puzzle below. It's from the kidnapper \u2014 apparently they like logic games.\n\nType DONE when you've finished eating and solved the puzzle to restart the timer." },
+      { from: "clue", text: "\u{1F4DC} SIT-DOWN PUZZLE \u2014 The Tunnel Map\n\nNortheastern's tunnel system connects 11 buildings. The kidnapper left this logic puzzle:\n\nFive students \u2014 Ayla, Ben, Carmen, Dev, and Elena \u2014 each entered the tunnels from a different building. Figure out who entered from SNELL LIBRARY:\n\n1. Ayla entered from a building whose name starts with a vowel.\n2. Ben did NOT enter from Dodge Hall or Ell Hall.\n3. Carmen entered from the building that comes alphabetically just before Dev's building.\n4. Elena entered from Richards Hall.\n5. The five buildings are: Cabot Gym, Dodge Hall, Ell Hall, Richards Hall, Snell Library.\n\nWho entered from Snell Library? Type their name." }
     ],
     hints: [
-      "Coach: Start with the sure things. Elena = Richards Hall (given). Ayla needs a vowel-starting building — that's Ell Hall.",
+      "Coach: Start with the sure things. Elena = Richards Hall (given). Ayla needs a vowel-starting building \u2014 that's Ell Hall.",
       "Coach: Carmen's building is alphabetically just before Dev's. That leaves Cabot Gym, Dodge Hall, and Snell Library for Ben/Carmen/Dev. Cabot comes before Dodge alphabetically... so Carmen = Cabot, Dev = Dodge. Who's left for Snell?"
     ],
     answer: ["BEN", "ben", "Ben"],
     playerResponse: "BEN",
-    successMsg: "Ben! Nice one. Elena = Richards, Ayla = Ell Hall, Carmen = Cabot, Dev = Dodge, and Ben = Snell Library.\n\nOkay, break's over. The kidnapper's message continues:\n\n\"You figured out my tunnel puzzle, but you still don't know WHO I am. Head to ISEC — that big glass building — and look for the next clue near the main entrance.\"\n\nISEC (the Interdisciplinary Science and Engineering Complex) is about a 4-minute walk. Type READY when you're there."
+    successMsg: "Ben! Nice one. Elena = Richards, Ayla = Ell Hall, Carmen = Cabot, Dev = Dodge, and Ben = Snell Library.\n\nOkay, break's over. The kidnapper's message continues:\n\n\"You figured out my tunnel puzzle, but you still don't know WHO I am. Head to ISEC \u2014 that big glass building \u2014 and look for the next clue near the main entrance.\"\n\nISEC (the Interdisciplinary Science and Engineering Complex) is about a 4-minute walk. Type READY when you're there."
   },
   {
     id: 5,
-    title: "Stop 5 — The Glass Giant",
+    title: "Stop 5 \u2014 The Glass Giant",
     location: "ISEC (Interdisciplinary Science and Engineering Complex)",
     messages: [
-      { from: "narrator", text: "ISEC — 220,000 square feet of glass and steel, and one of the coolest research buildings in the country. The kind of place where Northeastern's famous co-op students come back with real-world experience and put it to work.\n\nThere's something taped to the notice board near the main entrance." },
-      { from: "clue", text: "📜 CLUE FOUND:\n\nThe kidnapper is getting cocky. They left this message:\n\n\"You've been so busy chasing clues, you haven't stopped to think about who I am. Let me give you a hint about myself:\n\nI am NOT a current student.\nI was here when the oldest arena on campus still stood.\nMy favorite number is the amount of varsity sports Northeastern has.\nI always root AGAINST the Huskies.\"\n\nHere's your question: Northeastern's teams compete in NCAA Division I. How many varsity sports does the school have?\n\n(Just the number)" },
+      { from: "narrator", text: "ISEC \u2014 220,000 square feet of glass and steel, and one of the coolest research buildings in the country. The kind of place where Northeastern's famous co-op students come back with real-world experience and put it to work.\n\nThere's something taped to the notice board near the main entrance." },
+      { from: "clue", text: "\u{1F4DC} CLUE FOUND:\n\nThe kidnapper is getting cocky. They left this message:\n\n\"You've been so busy chasing clues, you haven't stopped to think about who I am. Let me give you a hint about myself:\n\nI am NOT a current student.\nI was here when the oldest arena on campus still stood.\nMy favorite number is the amount of varsity sports Northeastern has.\nI always root AGAINST the Huskies.\"\n\nHere's your question: Northeastern's teams compete in NCAA Division I. How many varsity sports does the school have?\n\n(Just the number)" }
     ],
     hints: [
       "Coach: Think about how many different sports you see at NEU. It's more than 15 but fewer than 20.",
@@ -243,19 +222,19 @@ const STOPS = [
     ],
     answer: ["18", "eighteen"],
     playerResponse: "18",
-    successMsg: "18 varsity sports — that's the kidnapper's favorite number. And they said they \"root AGAINST the Huskies\"... so they're a rival fan. And they knew Matthews Arena...\n\nKeep that in mind. We're building a profile.\n\nThe kidnapper's note continues:\n\"Your final destination is a place of endings and beginnings. Where the oldest arena once stood, now only ghosts and construction remain. Come say goodbye.\"\n\nHead toward the Matthews Arena construction site — where they're building the new athletics complex. It's about a 5-minute walk toward St. Botolph Street. Type READY when you arrive."
+    successMsg: "18 varsity sports \u2014 that's the kidnapper's favorite number. And they said they \"root AGAINST the Huskies\"... so they're a rival fan. And they knew Matthews Arena...\n\nKeep that in mind. We're building a profile.\n\nThe kidnapper's note continues:\n\"Your final destination is a place of endings and beginnings. Where the oldest arena once stood, now only ghosts and construction remain. Come say goodbye.\"\n\nHead toward the Matthews Arena construction site \u2014 where they're building the new athletics complex. It's about a 5-minute walk toward St. Botolph Street. Type READY when you arrive."
   },
   {
     id: 6,
-    title: "Stop 6 — Ghosts of Matthews",
+    title: "Stop 6 \u2014 Ghosts of Matthews",
     location: "Matthews Arena Construction Site (St. Botolph St side)",
     messages: [
-      { from: "narrator", text: "Here it is. Or... here it was.\n\nMatthews Arena stood here for 115 years. The oldest multi-purpose arena in the world. The Bruins played their first home game here. The Celtics too. Generations of Huskies grew up in those stands.\n\nNow it's rubble and excavators. They're building something incredible in its place — a 310,000 square foot athletics complex opening in 2028. But today, it's a construction site and a whole lot of memories.\n\nLook around the fencing. The kidnapper left one final message." },
-      { from: "clue", text: "📜 FINAL CLUE:\n\n\"Congratulations. You've proven yourself a true Husky. But to get Paws back, you need to tell me WHO I AM.\n\nHere's everything you know about me:\n• I root against the Huskies\n• I was here when Matthews Arena still stood\n• My favorite number is 18\n• I left my first clue at the site of a game between the Boston Americans and the Pittsburgh Pirates\n\nThe Americans beat the Pirates in 1903. What team do the Pirates represent TODAY? That's my school.\n\nWhat university am I from? Type just the CITY.\"\n\n(Hint: think about where the Pittsburgh Pirates are from... and which university's fans are Northeastern's biggest hockey rivals from that state.)" },
+      { from: "narrator", text: "Here it is. Or... here it was.\n\nMatthews Arena stood here for 115 years. The oldest multi-purpose arena in the world. The Bruins played their first home game here. The Celtics too. Generations of Huskies grew up in those stands.\n\nNow it's rubble and excavators. They're building something incredible in its place \u2014 a 310,000 square foot athletics complex opening in 2028. But today, it's a construction site and a whole lot of memories.\n\nLook around the fencing. The kidnapper left one final message." },
+      { from: "clue", text: "\u{1F4DC} FINAL CLUE:\n\n\"Congratulations. You've proven yourself a true Husky. But to get Paws back, you need to tell me WHO I AM.\n\nHere's everything you know about me:\n\u2022 I root against the Huskies\n\u2022 I was here when Matthews Arena still stood\n\u2022 My favorite number is 18\n\u2022 I left my first clue at the site of a game between the Boston Americans and the Pittsburgh Pirates\n\nThe Americans beat the Pirates in 1903. What team do the Pirates represent TODAY? That's my school.\n\nWhat university am I from? Type just the CITY.\"\n\n(Hint: think about where the Pittsburgh Pirates are from...)" }
     ],
     hints: [
-      "Coach: The Pittsburgh Pirates are from... Pittsburgh. But think about college rivalries. Which university from the state of Pennsylvania is a big hockey rival?",
-      "Coach: Okay this is a bit of a trick — the Pittsburgh Pirates' city is the answer. The kidnapper is from PITTSBURGH. But actually, re-read: they said \"What university am I from? Type just the CITY.\" The answer is simply PITTSBURGH."
+      "Coach: The Pittsburgh Pirates are from... Pittsburgh. Think about which university from Pennsylvania is a big hockey rival.",
+      "Coach: The answer is simply PITTSBURGH. That's the city the Pirates are from!"
     ],
     answer: ["PITTSBURGH", "pittsburgh", "Pittsburgh"],
     playerResponse: "PITTSBURGH",
@@ -263,14 +242,13 @@ const STOPS = [
   }
 ];
 
-const FINALE = [
-  { from: "narrator", text: "PITTSBURGH! Of course! A rival fan from out of town, jealous of the Huskies!\n\nI just got a call from campus police — they found Paws! He was in a crate behind the Cabot Center dumpsters, right back where this all started. He's safe, a little grumpy, and very hungry." },
-  { from: "system", text: "🐾🎉 MISSION COMPLETE — PAWS HAS BEEN RESCUED! 🎉🐾" },
-  { from: "narrator", text: "You did it! You walked across campus, cracked ciphers, solved logic puzzles, and outsmarted a very petty rival fan.\n\nYou're a true Northeastern Husky. Paws is safe, and Saturday's game is ON.\n\n🐾 Thanks for playing The Husky Heist!\nA Riddle Quest by RiddleQuest.com" },
+var FINALE = [
+  { from: "narrator", text: "PITTSBURGH! Of course! A rival fan from out of town, jealous of the Huskies!\n\nI just got a call from campus police \u2014 they found Paws! He was in a crate behind the Cabot Center dumpsters, right back where this all started. He's safe, a little grumpy, and very hungry." },
+  { from: "system", text: "\u{1F43E}\u{1F389} MISSION COMPLETE \u2014 PAWS HAS BEEN RESCUED! \u{1F389}\u{1F43E}" },
+  { from: "narrator", text: "You did it! You walked across campus, cracked ciphers, solved logic puzzles, and outsmarted a very petty rival fan.\n\nYou're a true Northeastern Husky. Paws is safe, and Saturday's game is ON.\n\n\u{1F43E} Thanks for playing The Husky Heist!\nA Riddle Quest by RiddleQuest.com" }
 ];
 
-// ---- APP STATE ----
-let state = {
+var state = {
   currentStop: 0,
   msgQueue: [],
   displayedMsgs: [],
@@ -284,150 +262,151 @@ let state = {
   elapsed: 0,
   pauseStart: null,
   totalPaused: 0,
-  finished: false,
+  finished: false
 };
 
-function $(sel) { return document.querySelector(sel); }
+function qs(sel) { return document.querySelector(sel); }
 
 function formatTime(ms) {
-  let s = Math.floor(ms / 1000);
-  let m = Math.floor(s / 60);
+  var s = Math.floor(ms / 1000);
+  var m = Math.floor(s / 60);
   s = s % 60;
-  let h = Math.floor(m / 60);
+  var h = Math.floor(m / 60);
   m = m % 60;
-  return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+  return pad(h) + ":" + pad(m) + ":" + pad(s);
+}
+function pad(n) { return n < 10 ? "0" + n : "" + n; }
+
+function escHtml(text) {
+  var d = document.createElement("div");
+  d.textContent = text;
+  return d.innerHTML.replace(/\n/g, "<br>");
 }
 
 function render() {
-  const app = $('#app');
-  const stop = STOPS[state.currentStop];
-  
-  let html = `
-    <div class="header">
-      <div class="paw">🐾</div>
-      <h1>The Husky Heist</h1>
-      <div class="sub">A Northeastern Riddle Quest</div>
-      <div class="badges">
-        <span class="badge">⏱ ~1 hour</span>
-        <span class="badge">🚶 ~1 mile loop</span>
-        <span class="badge">📍 NEU Boston Campus</span>
-      </div>
-    </div>
-    
-    <div class="progress-dots">
-      ${STOPS.map((s, i) => `<div class="dot ${i < state.currentStop ? 'done' : i === state.currentStop ? 'active' : ''}"></div>`).join('')}
-    </div>
-  `;
-  
-  // Timer
+  var app = qs("#app");
+  var stop = STOPS[state.currentStop];
+  var h = "";
+
+  h += '<div class="header">';
+  h += '<div class="paw">\u{1F43E}</div>';
+  h += '<h1>The Husky Heist</h1>';
+  h += '<div class="sub">A Northeastern Riddle Quest</div>';
+  h += '<div class="badges">';
+  h += '<span class="badge">\u23F1 ~1 hour</span>';
+  h += '<span class="badge">\u{1F6B6} ~1 mile loop</span>';
+  h += '<span class="badge">\u{1F4CD} NEU Boston Campus</span>';
+  h += '</div></div>';
+
+  h += '<div class="progress-dots">';
+  for (var i = 0; i < STOPS.length; i++) {
+    var cls = "dot";
+    if (i < state.currentStop) cls += " done";
+    else if (i === state.currentStop) cls += " active";
+    h += '<div class="' + cls + '"></div>';
+  }
+  h += '</div>';
+
   if (state.timerRunning || state.finished) {
-    let elapsed = state.elapsed;
+    var elapsed = state.elapsed;
     if (state.timerRunning && !state.timerPaused) {
       elapsed = Date.now() - state.startTime - state.totalPaused;
     }
-    html += `
-      <div class="timer-bar">
-        <div>
-          <div class="label">${state.finished ? 'Final Time' : state.timerPaused ? 'Paused' : 'Elapsed'}</div>
-          <div class="time" id="timerDisplay">${formatTime(elapsed)}</div>
-        </div>
-        ${!state.finished ? `<button class="timer-btn ${state.timerPaused ? 'paused' : ''}" onclick="togglePause()">${state.timerPaused ? '▶ Resume' : '⏸ Pause'}</button>` : ''}
-      </div>
-    `;
+    var lbl = state.finished ? "Final Time" : (state.timerPaused ? "Paused" : "Elapsed");
+    h += '<div class="timer-bar"><div>';
+    h += '<div class="label">' + lbl + '</div>';
+    h += '<div class="time" id="timerDisplay">' + formatTime(elapsed) + '</div>';
+    h += '</div>';
+    if (!state.finished) {
+      var pc = state.timerPaused ? ' paused' : '';
+      var bt = state.timerPaused ? '\u25B6 Resume' : '\u23F8 Pause';
+      h += '<button class="timer-btn' + pc + '" onclick="togglePause()">' + bt + '</button>';
+    }
+    h += '</div>';
   }
-  
-  // Stop title
+
   if (state.currentStop > 0 && stop) {
-    html += `<div style="text-align:center;margin-bottom:16px;">
-      <div style="font-size:13px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1px;">${stop.title}</div>
-      <div style="font-size:12px;color:var(--text-dim);margin-top:2px;">📍 ${stop.location}</div>
-    </div>`;
+    h += '<div class="stop-header">';
+    h += '<div class="stop-title">' + escHtml(stop.title) + '</div>';
+    h += '<div class="stop-loc">\u{1F4CD} ' + escHtml(stop.location) + '</div>';
+    h += '</div>';
   }
-  
-  // Messages
-  html += `<div id="messages">`;
-  for (const msg of state.displayedMsgs) {
-    if (msg.from === 'narrator') {
-      html += `<div class="msg-container"><div class="msg narrator"><div class="sender">🔍 Coach</div>${escHtml(msg.text)}</div></div>`;
-    } else if (msg.from === 'clue') {
-      html += `<div class="msg-container"><div class="msg killer"><div class="sender">📜 Clue</div>${escHtml(msg.text)}</div></div>`;
-    } else if (msg.from === 'player') {
-      html += `<div class="msg-container"><div class="msg player">${escHtml(msg.text)}</div></div>`;
-    } else if (msg.from === 'system') {
-      html += `<div class="msg-container"><div class="msg system">${escHtml(msg.text)}</div></div>`;
-    } else if (msg.from === 'lunch') {
-      html += `<div class="msg-container"><div class="msg lunch"><div class="sender">🍕 Halftime</div>${escHtml(msg.text)}</div></div>`;
-    } else if (msg.from === 'hint') {
-      html += `<div class="msg-container"><div class="msg narrator" style="border-color:#3a3a1a;"><div class="sender" style="color:var(--gold);">💡 Hint</div>${escHtml(msg.text)}</div></div>`;
-    } else if (msg.from === 'wrong') {
-      html += `<div class="msg-container"><div class="msg narrator" style="border-color:#4a2020;"><div class="sender" style="color:#e55;">❌ Coach</div>${escHtml(msg.text)}</div></div>`;
+
+  h += '<div id="messages">';
+  for (var j = 0; j < state.displayedMsgs.length; j++) {
+    var msg = state.displayedMsgs[j];
+    if (msg.from === "narrator") {
+      h += '<div class="msg-container"><div class="msg narrator"><div class="sender">\u{1F50D} Coach</div>' + escHtml(msg.text) + '</div></div>';
+    } else if (msg.from === "clue") {
+      h += '<div class="msg-container"><div class="msg killer"><div class="sender">\u{1F4DC} Clue</div>' + escHtml(msg.text) + '</div></div>';
+    } else if (msg.from === "player") {
+      h += '<div class="msg-container"><div class="msg player">' + escHtml(msg.text) + '</div></div>';
+    } else if (msg.from === "system") {
+      h += '<div class="msg-container"><div class="msg system">' + escHtml(msg.text) + '</div></div>';
+    } else if (msg.from === "lunch") {
+      h += '<div class="msg-container"><div class="msg lunch"><div class="sender">\u{1F355} Halftime</div>' + escHtml(msg.text) + '</div></div>';
+    } else if (msg.from === "hint") {
+      h += '<div class="msg-container"><div class="msg narrator" style="border-color:#3a3a1a;"><div class="sender" style="color:var(--gold);">\u{1F4A1} Hint</div>' + escHtml(msg.text) + '</div></div>';
+    } else if (msg.from === "wrong") {
+      h += '<div class="msg-container"><div class="msg narrator" style="border-color:#4a2020;"><div class="sender" style="color:#e55;">\u274C Coach</div>' + escHtml(msg.text) + '</div></div>';
     }
   }
-  html += `</div>`;
-  
-  // Hint buttons
+  h += '</div>';
+
   if (state.waitingForAnswer && stop && !state.finished) {
-    const maxHints = stop.hints ? stop.hints.length : 0;
-    html += `<div class="hint-row">`;
-    for (let i = 0; i < maxHints; i++) {
-      const used = state.hintsUsed > i;
-      html += `<button class="hint-btn" ${used || state.hintsUsed < i ? 'disabled' : ''} onclick="useHint(${i})">${used ? '💡 Hint ' + (i+1) + ' ✓' : '💡 Hint ' + (i+1)}</button>`;
+    var maxH = stop.hints ? stop.hints.length : 0;
+    h += '<div class="hint-row">';
+    for (var k = 0; k < maxH; k++) {
+      var used = state.hintsUsed > k;
+      var dis = (used || state.hintsUsed < k) ? " disabled" : "";
+      var label = used ? ("\u{1F4A1} Hint " + (k+1) + " \u2713") : ("\u{1F4A1} Hint " + (k+1));
+      h += '<button class="hint-btn"' + dis + ' onclick="useHint(' + k + ')">' + label + '</button>';
     }
-    html += `<button class="hint-btn" onclick="showAnswer()" style="margin-left:auto;border-color:#4a2020;color:#e55;">🏳️ Show Answer</button>`;
-    html += `</div>`;
+    h += '<button class="hint-btn" onclick="showAnswer()" style="margin-left:auto;border-color:#4a2020;color:#e55;">\u{1F3F3}\uFE0F Show Answer</button>';
+    h += '</div>';
   }
-  
-  // Input
+
   if (!state.finished) {
-    let placeholder = "Type your answer...";
-    if (state.waitingForReady) placeholder = "Type READY to continue...";
-    if (state.currentStop === 0 && state.displayedMsgs.length <= 1) placeholder = "Type START when you're at the statue...";
-    if (stop && stop.id === 4 && state.waitingForReady) placeholder = "Type DONE when you've eaten & solved it...";
-    
-    html += `
-      <div class="input-area">
-        <input type="text" id="userInput" placeholder="${placeholder}" onkeydown="if(event.key==='Enter')submitAnswer()" autocomplete="off" autocapitalize="off" />
-        <button class="send-btn" onclick="submitAnswer()">➤</button>
-      </div>
-    `;
+    var ph = "Type your answer...";
+    if (state.waitingForReady) ph = "Type READY to continue...";
+    if (state.currentStop === 0 && state.displayedMsgs.length <= 1) ph = "Type START when you're at the statue...";
+    if (stop && stop.id === 4 && state.waitingForReady) ph = "Type DONE when you've eaten and solved it...";
+    h += '<div class="input-area">';
+    h += "<input type='text' id='userInput' placeholder='" + ph + "' onkeydown='handleKey(event)' autocomplete='off' autocapitalize='off' />";
+    h += "<button class='send-btn' onclick='submitAnswer()'>\u27A4</button>";
+    h += '</div>';
   }
-  
-  html += `<div class="scroll-anchor" id="scrollAnchor"></div>`;
-  
-  app.innerHTML = html;
-  
-  // Auto-scroll
-  setTimeout(() => {
-    const anchor = document.getElementById('scrollAnchor');
-    if (anchor) anchor.scrollIntoView({ behavior: 'smooth' });
-    const input = document.getElementById('userInput');
-    if (input) input.focus();
+
+  h += '<div class="scroll-anchor" id="scrollAnchor"></div>';
+  app.innerHTML = h;
+
+  setTimeout(function() {
+    var anchor = document.getElementById("scrollAnchor");
+    if (anchor) anchor.scrollIntoView({ behavior: "smooth" });
+    var inp = document.getElementById("userInput");
+    if (inp) inp.focus();
   }, 50);
 }
 
-function escHtml(text) {
-  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-}
-
-function startStop(idx) {
+function doStartStop(idx) {
   state.currentStop = idx;
   state.hintsUsed = 0;
   state.puzzleSolved = false;
   state.waitingForReady = false;
   state.waitingForAnswer = false;
-  
-  const stop = STOPS[idx];
+  var stop = STOPS[idx];
   if (!stop) return;
-  
-  // Queue messages with delays
-  state.msgQueue = [...stop.messages];
+  if (stop.id === 4 && !state.timerPaused) {
+    state.timerPaused = true;
+    state.pauseStart = Date.now();
+  }
+  state.msgQueue = stop.messages.slice();
   showNextQueued();
 }
 
 function showNextQueued() {
   if (state.msgQueue.length === 0) {
-    // All messages shown, now wait for input
-    const stop = STOPS[state.currentStop];
+    var stop = STOPS[state.currentStop];
     if (stop.type === "intro") {
       state.waitingForReady = false;
       state.waitingForAnswer = true;
@@ -437,11 +416,9 @@ function showNextQueued() {
     render();
     return;
   }
-  
-  const msg = state.msgQueue.shift();
+  var msg = state.msgQueue.shift();
   state.displayedMsgs.push(msg);
   render();
-  
   if (state.msgQueue.length > 0) {
     setTimeout(showNextQueued, 600);
   } else {
@@ -450,101 +427,84 @@ function showNextQueued() {
 }
 
 function submitAnswer() {
-  const input = document.getElementById('userInput');
+  var input = document.getElementById("userInput");
   if (!input) return;
-  const val = input.value.trim();
+  var val = input.value.trim();
   if (!val) return;
-  
-  const stop = STOPS[state.currentStop];
-  
-  // Intro stop
+  var stop = STOPS[state.currentStop];
+
   if (stop.type === "intro") {
-    if (stop.accept.includes(val)) {
-      state.displayedMsgs.push({ from: 'player', text: stop.playerResponse });
+    if (stop.accept.indexOf(val) !== -1) {
+      state.displayedMsgs.push({ from: "player", text: stop.playerResponse });
       state.waitingForAnswer = false;
-      // Start timer
       state.timerRunning = true;
       state.startTime = Date.now();
       state.totalPaused = 0;
-      // Move to stop 1 after brief delay
       render();
-      setTimeout(() => {
+      setTimeout(function() {
         state.displayedMsgs = [];
-        startStop(1);
+        doStartStop(1);
       }, 800);
     } else {
-      state.displayedMsgs.push({ from: 'player', text: val });
-      state.displayedMsgs.push({ from: 'narrator', text: "Head to the Cy Young Statue outside Cabot Center and type START when you're ready!" });
+      state.displayedMsgs.push({ from: "player", text: val });
+      state.displayedMsgs.push({ from: "narrator", text: "Head to the Cy Young Statue outside Cabot Center and type START when you're ready!" });
       render();
     }
     return;
   }
-  
-  // Check for READY responses between stops
+
   if (state.waitingForReady) {
-    const readyWords = ["READY", "ready", "Ready", "DONE", "done", "Done"];
-    if (readyWords.includes(val)) {
-      state.displayedMsgs.push({ from: 'player', text: val });
+    var readyWords = ["READY", "ready", "Ready", "DONE", "done", "Done"];
+    if (readyWords.indexOf(val) !== -1) {
+      state.displayedMsgs.push({ from: "player", text: val });
       state.waitingForReady = false;
-      
-      // If it's the lunch stop DONE, unpause timer
       if (stop.id === 4 && state.timerPaused) {
         state.totalPaused += Date.now() - state.pauseStart;
         state.timerPaused = false;
         state.pauseStart = null;
       }
-      
       render();
-      setTimeout(() => {
+      setTimeout(function() {
         state.displayedMsgs = [];
-        startStop(state.currentStop + 1);
+        doStartStop(state.currentStop + 1);
       }, 600);
     } else {
-      state.displayedMsgs.push({ from: 'player', text: val });
-      state.displayedMsgs.push({ from: 'narrator', text: "Type READY when you've arrived at the next location! (Or DONE if you're at the lunch break.)" });
+      state.displayedMsgs.push({ from: "player", text: val });
+      state.displayedMsgs.push({ from: "narrator", text: "Type READY when you've arrived at the next location! (Or DONE if you're at the lunch break.)" });
       render();
     }
     return;
   }
-  
-  // Check answer
+
   if (state.waitingForAnswer) {
-    state.displayedMsgs.push({ from: 'player', text: val });
-    
-    if (stop.answer.includes(val) || stop.answer.map(a => a.toUpperCase()).includes(val.toUpperCase())) {
+    state.displayedMsgs.push({ from: "player", text: val });
+    var correct = false;
+    for (var i = 0; i < stop.answer.length; i++) {
+      if (stop.answer[i].toUpperCase() === val.toUpperCase()) {
+        correct = true;
+        break;
+      }
+    }
+    if (correct) {
       state.puzzleSolved = true;
       state.waitingForAnswer = false;
-      
-      // Last stop?
       if (state.currentStop === STOPS.length - 1) {
-        // Finale!
         state.elapsed = Date.now() - state.startTime - state.totalPaused;
         state.timerRunning = false;
         state.finished = true;
-        for (const msg of FINALE) {
-          state.displayedMsgs.push(msg);
+        for (var f = 0; f < FINALE.length; f++) {
+          state.displayedMsgs.push(FINALE[f]);
         }
-        state.displayedMsgs.push({ from: 'system', text: `⏱ Your time: ${formatTime(state.elapsed)}` });
+        state.displayedMsgs.push({ from: "system", text: "\u23F1 Your time: " + formatTime(state.elapsed) });
         render();
         return;
       }
-      
-      // Success message
-      state.displayedMsgs.push({ from: 'system', text: "✅ Correct!" });
-      state.displayedMsgs.push({ from: 'narrator', text: stop.successMsg });
+      state.displayedMsgs.push({ from: "system", text: "\u2705 Correct!" });
+      state.displayedMsgs.push({ from: "narrator", text: stop.successMsg });
       state.waitingForReady = true;
-      
-      // Auto-pause for lunch stop
-      if (STOPS[state.currentStop + 1] && STOPS[state.currentStop + 1].id === 4) {
-        // The next stop is the lunch break — it will auto-pause when it loads
-      }
-      if (stop.id === 3) {
-        // After stop 3 success, the next stop (4) is lunch — pause timer when they get there
-      }
-      
       render();
     } else {
-      state.displayedMsgs.push({ from: 'wrong', text: "Hmm, that's not quite right. Try again! Use a hint if you're stuck — no penalties, this is just for fun." });
+      state.displayedMsgs.push({ from: "wrong", text: "Hmm, that's not quite right. Try again! Use a hint if you're stuck \u2014 no penalties, this is just for fun." });
       render();
     }
     return;
@@ -552,20 +512,23 @@ function submitAnswer() {
 }
 
 function useHint(idx) {
-  const stop = STOPS[state.currentStop];
+  var stop = STOPS[state.currentStop];
   if (!stop || !stop.hints || idx >= stop.hints.length) return;
   state.hintsUsed = idx + 1;
-  state.displayedMsgs.push({ from: 'hint', text: stop.hints[idx] });
+  state.displayedMsgs.push({ from: "hint", text: stop.hints[idx] });
   render();
 }
 
 function showAnswer() {
-  const stop = STOPS[state.currentStop];
+  var stop = STOPS[state.currentStop];
   if (!stop) return;
-  const ans = stop.answer[0];
-  state.displayedMsgs.push({ from: 'hint', text: `The answer is: ${ans}\n\nType it in to continue!` });
+  state.displayedMsgs.push({ from: "hint", text: "The answer is: " + stop.answer[0] + "\n\nType it in to continue!" });
   state.hintsUsed = stop.hints ? stop.hints.length : 0;
   render();
+}
+
+function handleKey(e) {
+  if (e.key === "Enter") submitAnswer();
 }
 
 function togglePause() {
@@ -580,30 +543,16 @@ function togglePause() {
   render();
 }
 
-// Timer update
-setInterval(() => {
+setInterval(function() {
   if (state.timerRunning && !state.timerPaused) {
-    const el = document.getElementById('timerDisplay');
+    var el = document.getElementById("timerDisplay");
     if (el) {
-      const elapsed = Date.now() - state.startTime - state.totalPaused;
-      el.textContent = formatTime(elapsed);
+      el.textContent = formatTime(Date.now() - state.startTime - state.totalPaused);
     }
   }
 }, 1000);
 
-// Auto-pause on lunch stop
-const origStartStop = startStop;
-startStop = function(idx) {
-  origStartStop(idx);
-  if (STOPS[idx] && STOPS[idx].id === 4 && !state.timerPaused) {
-    state.timerPaused = true;
-    state.pauseStart = Date.now();
-    render();
-  }
-};
-
-// Init
-startStop(0);
+doStartStop(0);
 </script>
 </body>
 </html>
